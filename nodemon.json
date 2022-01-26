@@ -1,0 +1,6 @@
+{
+  "verbose": false,
+  "ignore": ["node_modules/*"],
+  "watch": ["src/server/*", "src/shared/*"],
+  "ext": "ts,json,js,"
+}

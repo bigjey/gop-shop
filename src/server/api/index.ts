@@ -1,6 +1,6 @@
-import Express from "express";
+import express from "express";
 
-export const api = Express.Router();
+export const api = express.Router();
 
 api.use((req, res) => {
   res.send("api 4");

@@ -1,15 +1,15 @@
-import Express from "express";
+import express from "express";
 import path from "path";
 
 import { api } from "./api";
 
-export const app = Express();
+export const app = express();
 
 const projectRoot = process.cwd();
 
 app.use("/api", api);
 
-app.use(Express.static(path.resolve(projectRoot, "dist/client")));
+app.use(express.static(path.resolve(projectRoot, "dist/client")));
 
 app.get("/admin", (req, res) => {
   res.sendFile(path.resolve(projectRoot, "dist/client/admin/admin.html"));

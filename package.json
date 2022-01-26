@@ -1,6 +1,10 @@
 {
   "name": "gop-shop",
   "version": "1.0.0",
+  "main": "dist/server/index.js",
+  "engines": {
+    "node": "14.x"
+  },
   "description": "",
   "scripts": {
     "start": "node dist/server/index.js",

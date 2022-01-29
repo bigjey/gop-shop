@@ -1,15 +1,21 @@
 import "./CategoriesScreen.css";
 
 import React, { useEffect } from "react";
-import { Button, Container, Row, Col, Form } from "react-bootstrap";
+import { Button, Container, Row, Col, Modal, Form } from "react-bootstrap";
 import { Outlet, useLocation, useNavigate } from "react-router";
 import { deleteCategory, getCategoriesTree } from "../../api/categories";
 import classNames from "classnames";
+import { CategoriesOptions } from "../../components/CategoryOptions";
 
 export const CategoriesScreen: React.FC = () => {
   const [categories, setCategories] = React.useState<Category[]>([]);
   const [isMounted, setMounted] = React.useState<Boolean>(false);
   const [isLoading, setIsLoading] = React.useState<Boolean>(true);
+  const [deleteType, setDeleteType] = React.useState<"all" | "move">("all");
+  const [deleteCategoryPrompt, setDeleteCategoryPrompt] =
+    React.useState<Category>();
+
+  const newParentIdRef = React.useRef<HTMLSelectElement>(null);
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -32,6 +38,25 @@ export const CategoriesScreen: React.FC = () => {
         setCategories(data as Category[]);
         setIsLoading(false);
       });
+    }
+  }, []);
+
+  const onDeleteClick = React.useCallback((category: Category) => {
+    if (category.children?.length) {
+      setDeleteCategoryPrompt(category);
+    } else {
+      if (confirm(`Delete "${category.name}"?`)) {
+        deleteCategory(category.id)
+          .then(() => {
+            navigate("", {
+              replace: true,
+              state: "reload",
+            });
+          })
+          .catch(() => {
+            alert("Could not delete this category");
+          });
+      }
     }
   }, []);
 
@@ -75,7 +100,7 @@ export const CategoriesScreen: React.FC = () => {
             <div>
               {categories.length ? (
                 <div className="categories-tree">
-                  <Categories items={categories} />
+                  <Categories items={categories} onDelete={onDeleteClick} />
                 </div>
               ) : (
                 <div>No Categories yet</div>
@@ -85,14 +110,93 @@ export const CategoriesScreen: React.FC = () => {
           <Outlet />
         </Container>
       </div>
+      {deleteCategoryPrompt ? (
+        <Modal
+          show
+          centered
+          size="lg"
+          onHide={() => {
+            setDeleteCategoryPrompt(undefined);
+          }}
+        >
+          <Modal.Body>
+            <h4>Category "{deleteCategoryPrompt.name}" has children</h4>
+            <p>Please select how you wanna deal with it's children</p>
+            <hr />
+            <Form>
+              <Form.Group>
+                <Form.Check
+                  name="deleteType"
+                  type={"radio"}
+                  label="Delete all children categories"
+                  id="all"
+                  checked={deleteType === "all"}
+                  onChange={() => setDeleteType("all")}
+                />
+              </Form.Group>
+              <br />
+              <Form.Group>
+                <Form.Check
+                  name="deleteType"
+                  type={"radio"}
+                  label="Move children categories to another category"
+                  id="move"
+                  checked={deleteType === "move"}
+                  onChange={() => setDeleteType("move")}
+                />
+                <Form.Select
+                  aria-label="Select Category"
+                  id="parentId"
+                  name="parentId"
+                  ref={newParentIdRef}
+                >
+                  <option value={""}>No parent (root)</option>
+                  <CategoriesOptions
+                    items={categories}
+                    exclude={[deleteCategoryPrompt.id]}
+                  />
+                </Form.Select>
+              </Form.Group>
+            </Form>
+          </Modal.Body>
+          <Modal.Footer>
+            <Button
+              variant="danger"
+              size="lg"
+              onClick={() => {
+                if (deleteType === "all") {
+                  deleteCategory(deleteCategoryPrompt.id).then(() => {
+                    alert("deleted");
+                  });
+                } else {
+                  const deleteOptions: DeleteOptions = {
+                    type: deleteType,
+                    newParentId: newParentIdRef.current?.value
+                      ? Number(newParentIdRef.current.value)
+                      : null,
+                  };
+                  deleteCategory(deleteCategoryPrompt.id, deleteOptions).then(
+                    () => {
+                      alert("deleted");
+                    }
+                  );
+                }
+              }}
+            >
+              Delete "{deleteCategoryPrompt.name}"
+            </Button>
+          </Modal.Footer>
+        </Modal>
+      ) : null}
     </>
   );
 };
 
-const Categories: React.FC<{ items: Category[]; level?: number }> = ({
-  items,
-  level = 0,
-}) => {
+const Categories: React.FC<{
+  items: Category[];
+  level?: number;
+  onDelete(category: Category): void;
+}> = ({ items, level = 0, onDelete }) => {
   const navigate = useNavigate();
 
   return (
@@ -127,18 +231,7 @@ const Categories: React.FC<{ items: Category[]; level?: number }> = ({
                   <Button
                     variant="outline-danger"
                     onClick={() => {
-                      if (confirm(`Delete "${item.name}"?`)) {
-                        deleteCategory(item.id)
-                          .then(() => {
-                            navigate("", {
-                              replace: true,
-                              state: "reload",
-                            });
-                          })
-                          .catch(() => {
-                            alert("Could not delete this category");
-                          });
-                      }
+                      onDelete(item);
                     }}
                   >
                     delete
@@ -148,7 +241,11 @@ const Categories: React.FC<{ items: Category[]; level?: number }> = ({
             </Row>
           </div>
           {item.children && item.children.length > 0 && (
-            <Categories items={item.children} level={level + 1} />
+            <Categories
+              items={item.children}
+              level={level + 1}
+              onDelete={onDelete}
+            />
           )}
         </React.Fragment>
       ))}

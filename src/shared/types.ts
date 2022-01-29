@@ -8,3 +8,7 @@ type Category = {
 };
 
 type CategoryFormValues = Omit<Category, "id" | "children">;
+
+type DeleteOptions =
+  | { type: "all" }
+  | { type: "move"; newParentId: number | null };

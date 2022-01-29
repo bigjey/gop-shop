@@ -30,8 +30,15 @@ export const createCategory = (data: CategoryFormValues) => {
   }).then<void>(processFetchResponse);
 };
 
-export const deleteCategory = (id: number) => {
+export const deleteCategory = (
+  id: number,
+  options: DeleteOptions = { type: "all" }
+) => {
   return fetch(`${API_URL}/${id}`, {
     method: "delete",
+    body: JSON.stringify(options),
+    headers: {
+      "content-type": "application/json",
+    },
   }).then<void>(processFetchResponse);
 };

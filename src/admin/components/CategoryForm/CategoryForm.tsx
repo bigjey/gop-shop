@@ -9,6 +9,7 @@ import {
   createCategory,
   updateCategory,
 } from "../../api/categories";
+import { CategoriesOptions } from "../CategoryOptions";
 
 type CategoryFormProps = {
   mode?: "edit" | "create";
@@ -157,7 +158,6 @@ export const CategoryForm: React.FC<CategoryFormProps> = (props) => {
                   </Form.Control.Feedback>
                 </Col>
               </Form.Group>
-
               <Form.Group as={Row} className="mb-3">
                 <Form.Label column sm={2} htmlFor="parentId">
                   Parent
@@ -173,7 +173,7 @@ export const CategoryForm: React.FC<CategoryFormProps> = (props) => {
                     <option value={""}>No parent (root)</option>
                     <CategoriesOptions
                       items={categories}
-                      exclude={mode === "edit" && id ? Number(id) : undefined}
+                      exclude={mode === "edit" && id ? [Number(id)] : []}
                     />
                   </Form.Select>
                 </Col>
@@ -211,40 +211,5 @@ export const CategoryForm: React.FC<CategoryFormProps> = (props) => {
         </>
       )}
     </Modal>
-  );
-};
-
-const CategoriesOptions: React.FC<{
-  items?: Category[];
-  level?: number;
-  exclude?: number;
-}> = (props) => {
-  const { items, level = 0, exclude } = props;
-
-  if (!items) {
-    return null;
-  }
-
-  return (
-    <>
-      {items.map((c) => {
-        if (c.id === exclude) {
-          return null;
-        }
-
-        return (
-          <React.Fragment key={c.id}>
-            <option value={c.id} className={`level-${level}`}>
-              {"".padStart(level * 3, "   ")} {c.name}
-            </option>
-            <CategoriesOptions
-              items={c.children}
-              level={level + 1}
-              exclude={exclude}
-            />
-          </React.Fragment>
-        );
-      })}
-    </>
   );
 };

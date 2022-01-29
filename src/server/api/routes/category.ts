@@ -58,6 +58,21 @@ categoryRouter
 
 categoryRouter
   .route("/categories/:id")
+  .get(async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const category = await prisma.category.findUnique({
+        where: { id: Number(req.params.id) },
+      });
+      if (!category) {
+        res.status(404).send("Category not found");
+        return;
+      }
+      res.send(category);
+      return;
+    } catch (error) {
+      next(error);
+    }
+  })
   .put(async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { name, parentId = null, sortOrder, isActive = true } = req.body;

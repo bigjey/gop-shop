@@ -126,7 +126,7 @@ categoryRouter
         console.log("Updated: ", updatedCategory);
         console.log("Deleted: ", deletedCategoty);
         res.json({
-          msg: `category ${updatedCategory} has been assigned as a child to a category with id ${newParentId}`,
+          msg: `category has been assigned as a child to a category with id ${newParentId}`,
         });
         return;
       }

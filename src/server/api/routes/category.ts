@@ -1,10 +1,13 @@
 import express, { Request, Response, NextFunction } from "express";
 import { PrismaClient } from "@prisma/client";
+import { createDataTree } from "../../utils/treeBuilder";
+
 const prisma = new PrismaClient({
   rejectOnNotFound: true,
   errorFormat: "pretty",
   log: ["query", "info", "warn", "error"],
 });
+
 export const categoryRouter = express.Router();
 
 categoryRouter
@@ -27,11 +30,11 @@ categoryRouter
   .get(async (req: Request, res: Response, next: NextFunction) => {
     try {
       const categories = await prisma.category.findMany({
-        where: { parentId: null },
-        include: { children: { include: { children: true } } },
         orderBy: { sortOrder: "asc" },
       });
-      res.send(categories);
+      const catTree = createDataTree(categories);
+      console.log(catTree);
+      res.send(catTree);
       return;
     } catch (error) {
       next(error);

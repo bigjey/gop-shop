@@ -1,4 +1,4 @@
-import express, { Request, Response, NextFunction, request } from "express";
+import express, { Request, Response, NextFunction } from "express";
 import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 export const categoryRouter = express.Router();

@@ -8,6 +8,9 @@ export const app = express();
 
 const projectRoot = process.cwd();
 
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
+
 app.use("/api", api);
 
 app.use(express.static(path.resolve(projectRoot, "dist/client")));

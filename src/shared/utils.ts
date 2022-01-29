@@ -1,5 +1,10 @@
-import { TestType } from "./types";
+export async function processFetchResponse(r: Response) {
+  if (r.status === 200) {
+    return r.json();
+  }
 
-export const testUtil = (): TestType => {
-  return 2;
-};
+  return Promise.reject({
+    status: r.status,
+    message: await r.text(),
+  });
+}

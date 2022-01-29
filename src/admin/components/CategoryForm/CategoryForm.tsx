@@ -2,13 +2,13 @@ import { useFormik } from "formik";
 import React, { useEffect, useState } from "react";
 import { Button, Modal, Form, Row, Col } from "react-bootstrap";
 import { useNavigate, useParams } from "react-router";
-import {
-  createCategory,
-  editCategory,
-  getCategories,
-  getCategory,
-} from "../../mocks";
 import * as Yup from "yup";
+import {
+  getCategoriesTree,
+  getCategory,
+  createCategory,
+  updateCategory,
+} from "../../api/categories";
 
 type CategoryFormProps = {
   mode?: "edit" | "create";
@@ -41,7 +41,7 @@ export const CategoryForm: React.FC<CategoryFormProps> = (props) => {
     setIsLoading(true);
 
     Promise.all([
-      getCategories(),
+      getCategoriesTree(),
       mode === "edit" && id ? getCategory(Number(id)) : null,
     ])
       .then(([categories, category]) => {
@@ -52,17 +52,14 @@ export const CategoryForm: React.FC<CategoryFormProps> = (props) => {
         }
       })
       .catch((e) => {
-        console.log(e);
-        console.log("ololo", e);
         setError(e.toString());
       })
       .finally(() => {
-        console.log("???");
         setIsLoading(false);
       });
   }, []);
 
-  const formik = useFormik<CategoryFormValue>({
+  const formik = useFormik<CategoryFormValues>({
     enableReinitialize: true,
     initialValues: {
       isActive: true,
@@ -75,27 +72,31 @@ export const CategoryForm: React.FC<CategoryFormProps> = (props) => {
       name: Yup.string().required("Required"),
     }),
     onSubmit: (values) => {
+      if (values.parentId) {
+        values.parentId = Number(values.parentId);
+      } else {
+        values.parentId = null;
+      }
+
       if (mode === "edit") {
-        return editCategory(Number(id), values)
+        return updateCategory(Number(id), values)
           .then(() => {
             navigate("/categories", { state: "reload" });
           })
-          .catch(() => {
-            console.log("error");
+          .catch((e) => {
+            console.log(e);
           });
       } else {
         return createCategory(values)
           .then(() => {
             navigate("/categories", { state: "reload" });
           })
-          .catch(() => {
-            console.log("error");
+          .catch((e) => {
+            console.log(e);
           });
       }
     },
   });
-
-  console.log(isLoading);
 
   return (
     <Modal

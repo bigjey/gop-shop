@@ -3,7 +3,8 @@ import "./CategoriesScreen.css";
 import React, { useEffect } from "react";
 import { Button, Container, Row, Col, Form } from "react-bootstrap";
 import { Outlet, useLocation, useNavigate } from "react-router";
-import { getCategories } from "../../mocks";
+import { deleteCategory, getCategoriesTree } from "../../api/categories";
+import classNames from "classnames";
 
 export const CategoriesScreen: React.FC = () => {
   const [categories, setCategories] = React.useState<Category[]>([]);
@@ -16,7 +17,7 @@ export const CategoriesScreen: React.FC = () => {
   useEffect(() => {
     if (isMounted && location.state === "reload") {
       setIsLoading(true);
-      getCategories().then((data) => {
+      getCategoriesTree().then((data) => {
         setCategories(data as Category[]);
         setIsLoading(false);
       });
@@ -27,7 +28,7 @@ export const CategoriesScreen: React.FC = () => {
     setMounted(true);
     if (location.state !== "reload") {
       setIsLoading(true);
-      getCategories().then((data) => {
+      getCategoriesTree().then((data) => {
         setCategories(data as Category[]);
         setIsLoading(false);
       });
@@ -99,12 +100,19 @@ const Categories: React.FC<{ items: Category[]; level?: number }> = ({
       {items.map((item) => (
         <React.Fragment key={item.name}>
           <div
-            className="categories-tree__item"
+            className={classNames(["categories-tree__item"], {
+              "categories-tree__item--inactive": !item.isActive,
+            })}
             style={{ marginLeft: level * 30, maxWidth: 600 }}
           >
             <Row style={{ alignItems: "center" }}>
               <Col xs={12} lg={true}>
-                {item.name}
+                {item.name}{" "}
+                {!item.isActive && (
+                  <div className="categories-tree__inactive-label">
+                    inactive
+                  </div>
+                )}
               </Col>
               <Col xs={12} lg={true} style={{ textAlign: "right" }}>
                 <div className="categories-tree__controls">
@@ -119,10 +127,18 @@ const Categories: React.FC<{ items: Category[]; level?: number }> = ({
                   <Button
                     variant="outline-danger"
                     onClick={() => {
-                      navigate("", {
-                        replace: true,
-                        state: "reload",
-                      });
+                      if (confirm(`Delete "${item.name}"?`)) {
+                        deleteCategory(item.id)
+                          .then(() => {
+                            navigate("", {
+                              replace: true,
+                              state: "reload",
+                            });
+                          })
+                          .catch(() => {
+                            alert("Could not delete this category");
+                          });
+                      }
                     }}
                   >
                     delete

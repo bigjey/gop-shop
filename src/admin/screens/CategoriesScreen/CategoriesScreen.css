@@ -9,6 +9,15 @@
   position: relative;
 }
 
+.categories-tree__item--inactive {
+  border-style: dashed;
+}
+
+.categories-tree__inactive-label {
+  color: #888;
+  font-weight: normal;
+}
+
 .categories-tree__item:hover {
   background: #e9e9e9;
 }

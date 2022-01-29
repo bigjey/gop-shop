@@ -7,4 +7,4 @@ type Category = {
   children?: Category[];
 };
 
-type CategoryFormValue = Omit<Category, "id" | "children">;
+type CategoryFormValues = Omit<Category, "id" | "children">;

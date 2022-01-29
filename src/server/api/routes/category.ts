@@ -1,6 +1,10 @@
 import express, { Request, Response, NextFunction } from "express";
 import { PrismaClient } from "@prisma/client";
-const prisma = new PrismaClient();
+const prisma = new PrismaClient({
+  rejectOnNotFound: true,
+  errorFormat: "pretty",
+  log: ["query", "info", "warn", "error"],
+});
 export const categoryRouter = express.Router();
 
 categoryRouter
@@ -9,6 +13,7 @@ categoryRouter
     try {
       const categories = await prisma.category.findMany({
         where: { parentId: null },
+        orderBy: { sortOrder: "asc" },
       });
       res.send(categories);
       return;
@@ -24,6 +29,7 @@ categoryRouter
       const categories = await prisma.category.findMany({
         where: { parentId: null },
         include: { children: { include: { children: true } } },
+        orderBy: { sortOrder: "asc" },
       });
       res.send(categories);
       return;

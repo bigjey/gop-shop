@@ -171,7 +171,10 @@ export const CategoryForm: React.FC<CategoryFormProps> = (props) => {
                     value={formik.values.parentId || undefined}
                   >
                     <option value={""}>No parent (root)</option>
-                    <CategoriesOptions items={categories} />
+                    <CategoriesOptions
+                      items={categories}
+                      exclude={mode === "edit" && id ? Number(id) : undefined}
+                    />
                   </Form.Select>
                 </Col>
               </Form.Group>
@@ -211,10 +214,12 @@ export const CategoryForm: React.FC<CategoryFormProps> = (props) => {
   );
 };
 
-const CategoriesOptions: React.FC<{ items?: Category[]; level?: number }> = (
-  props
-) => {
-  const { items, level = 0 } = props;
+const CategoriesOptions: React.FC<{
+  items?: Category[];
+  level?: number;
+  exclude?: number;
+}> = (props) => {
+  const { items, level = 0, exclude } = props;
 
   if (!items) {
     return null;
@@ -222,14 +227,24 @@ const CategoriesOptions: React.FC<{ items?: Category[]; level?: number }> = (
 
   return (
     <>
-      {items.map((c) => (
-        <React.Fragment key={c.id}>
-          <option value={c.id} className={`level-${level}`}>
-            {"".padStart(level * 3, "   ")} {c.name}
-          </option>
-          <CategoriesOptions items={c.children} level={level + 1} />
-        </React.Fragment>
-      ))}
+      {items.map((c) => {
+        if (c.id === exclude) {
+          return null;
+        }
+
+        return (
+          <React.Fragment key={c.id}>
+            <option value={c.id} className={`level-${level}`}>
+              {"".padStart(level * 3, "   ")} {c.name}
+            </option>
+            <CategoriesOptions
+              items={c.children}
+              level={level + 1}
+              exclude={exclude}
+            />
+          </React.Fragment>
+        );
+      })}
     </>
   );
 };

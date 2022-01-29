@@ -18,7 +18,7 @@ model Category {
   isActive  Boolean
   createdAt DateTime   @default(now()) @db.Timestamp(6)
   updatedAt DateTime?
-  parent    Category?  @relation("parent", fields: [parentId], references: [id])
+  parent    Category?  @relation("parent", fields: [parentId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   children  Category[] @relation("parent")
   Product   Product[]
 }

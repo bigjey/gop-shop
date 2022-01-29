@@ -33,7 +33,6 @@ categoryRouter
         orderBy: { sortOrder: "asc" },
       });
       const catTree = createDataTree(categories);
-      console.log(catTree);
       res.send(catTree);
       return;
     } catch (error) {
@@ -85,7 +84,6 @@ categoryRouter
   .put(async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { name, parentId = null, sortOrder, isActive = true } = req.body;
-      console.log(req.body);
       const category = await prisma.category.update({
         where: { id: Number(req.params.id) },
         data: {
@@ -103,11 +101,35 @@ categoryRouter
   })
   .delete(async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const category = await prisma.category.delete({
-        where: { id: Number(req.params.id) },
-      });
-      res.send(category);
-      return;
+      if (req.body.type === "all") {
+        const category = await prisma.category.delete({
+          where: { id: Number(req.params.id) },
+        });
+        res.send(category);
+        return;
+      }
+
+      if (req.body.type === "move") {
+        const { newParentId } = req.body;
+
+        const [updatedCategory, deletedCategoty] = await prisma.$transaction([
+          prisma.category.updateMany({
+            where: { parentId: Number(req.params.id) },
+            data: {
+              parentId: newParentId,
+            },
+          }),
+          prisma.category.delete({
+            where: { id: Number(req.params.id) },
+          }),
+        ]);
+        console.log("Updated: ", updatedCategory);
+        console.log("Deleted: ", deletedCategoty);
+        res.send(
+          `category ${updatedCategory} has been assigned as a child to a category with id ${newParentId}`
+        );
+        return;
+      }
     } catch (error) {
       next(error);
     }

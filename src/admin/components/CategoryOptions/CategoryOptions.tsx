@@ -1,7 +1,8 @@
+import { Category } from "@prisma/client";
 import React from "react";
 
 export const CategoriesOptions: React.FC<{
-  items?: Category[];
+  items?: (Category & { children?: Category[] })[];
   level?: number;
   exclude?: number[];
 }> = (props) => {

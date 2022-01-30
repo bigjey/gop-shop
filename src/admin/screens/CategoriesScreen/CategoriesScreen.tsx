@@ -6,9 +6,13 @@ import { Outlet, useLocation, useNavigate } from "react-router";
 import { deleteCategory, getCategoriesTree } from "../../api/categories";
 import classNames from "classnames";
 import { CategoriesOptions } from "../../components/CategoryOptions";
+import { Category } from "@prisma/client";
+import { DeleteOptions } from "../../../shared/types";
 
 export const CategoriesScreen: React.FC = () => {
-  const [categories, setCategories] = React.useState<Category[]>([]);
+  const [categories, setCategories] = React.useState<
+    (Category & { children?: Category[] })[]
+  >([]);
   const [isMounted, setMounted] = React.useState<boolean>(false);
   const [isLoading, setIsLoading] = React.useState<boolean>(true);
   const [deleteType, setDeleteType] = React.useState<"all" | "move">("all");
@@ -24,7 +28,7 @@ export const CategoriesScreen: React.FC = () => {
     if (isMounted && location.state === "reload") {
       setIsLoading(true);
       getCategoriesTree().then((data) => {
-        setCategories(data as Category[]);
+        setCategories(data as (Category & { children?: Category[] })[]);
         setIsLoading(false);
       });
     }
@@ -41,24 +45,27 @@ export const CategoriesScreen: React.FC = () => {
     }
   }, []);
 
-  const onDeleteClick = React.useCallback((category: Category) => {
-    if (category.children?.length) {
-      setDeleteCategoryPrompt(category);
-    } else {
-      if (confirm(`Delete ${category.name} category?`)) {
-        deleteCategory(category.id)
-          .then(() => {
-            navigate("", {
-              replace: true,
-              state: "reload",
+  const onDeleteClick = React.useCallback(
+    (category: Category & { children?: Category[] }) => {
+      if (category.children?.length) {
+        setDeleteCategoryPrompt(category);
+      } else {
+        if (confirm(`Delete ${category.name} category?`)) {
+          deleteCategory(category.id)
+            .then(() => {
+              navigate("", {
+                replace: true,
+                state: "reload",
+              });
+            })
+            .catch(() => {
+              alert("Could not delete this category");
             });
-          })
-          .catch(() => {
-            alert("Could not delete this category");
-          });
+        }
       }
-    }
-  }, []);
+    },
+    []
+  );
 
   return (
     <>
@@ -212,7 +219,7 @@ export const CategoriesScreen: React.FC = () => {
 };
 
 const Categories: React.FC<{
-  items: Category[];
+  items: (Category & { children?: Category[] })[];
   level?: number;
   onDelete(category: Category): void;
 }> = ({ items, level = 0, onDelete }) => {

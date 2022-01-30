@@ -1,3 +1,4 @@
+import { Category, Prisma } from "@prisma/client";
 import { useFormik } from "formik";
 import React, { useEffect, useState } from "react";
 import { Button, Modal, Form, Row, Col } from "react-bootstrap";
@@ -60,7 +61,7 @@ export const CategoryForm: React.FC<CategoryFormProps> = (props) => {
       });
   }, []);
 
-  const formik = useFormik<CategoryFormValues>({
+  const formik = useFormik<Prisma.CategoryUncheckedCreateInput>({
     enableReinitialize: true,
     initialValues: {
       isActive: true,
@@ -190,7 +191,7 @@ export const CategoryForm: React.FC<CategoryFormProps> = (props) => {
                     placeholder="Sort Order"
                     id="sortOrder"
                     name="sortOrder"
-                    value={formik.values.sortOrder}
+                    value={formik.values.sortOrder || undefined}
                     onChange={formik.handleChange}
                   />
                 </Col>

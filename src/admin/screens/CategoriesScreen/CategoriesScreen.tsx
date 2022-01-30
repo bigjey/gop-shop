@@ -45,7 +45,7 @@ export const CategoriesScreen: React.FC = () => {
     if (category.children?.length) {
       setDeleteCategoryPrompt(category);
     } else {
-      if (confirm(`Delete "${category.name}"?`)) {
+      if (confirm(`Delete ${category.name} category?`)) {
         deleteCategory(category.id)
           .then(() => {
             navigate("", {
@@ -120,7 +120,7 @@ export const CategoriesScreen: React.FC = () => {
           }}
         >
           <Modal.Body>
-            <h4>Category "{deleteCategoryPrompt.name}" has children</h4>
+            <h4>Category {deleteCategoryPrompt.name} has children</h4>
             <p>Please select how you wanna deal with it's children</p>
             <hr />
             <Form>
@@ -202,7 +202,7 @@ export const CategoriesScreen: React.FC = () => {
                 }
               }}
             >
-              Delete "{deleteCategoryPrompt.name}"
+              Delete {deleteCategoryPrompt.name}
             </Button>
           </Modal.Footer>
         </Modal>

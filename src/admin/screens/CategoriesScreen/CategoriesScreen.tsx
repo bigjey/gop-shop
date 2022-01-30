@@ -134,7 +134,6 @@ export const CategoriesScreen: React.FC = () => {
                   onChange={() => setDeleteType("all")}
                 />
               </Form.Group>
-              <br />
               <Form.Group>
                 <Form.Check
                   name="deleteType"
@@ -144,18 +143,20 @@ export const CategoriesScreen: React.FC = () => {
                   checked={deleteType === "move"}
                   onChange={() => setDeleteType("move")}
                 />
-                <Form.Select
-                  aria-label="Select Category"
-                  id="parentId"
-                  name="parentId"
-                  ref={newParentIdRef}
-                >
-                  <option value={""}>No parent (root)</option>
-                  <CategoriesOptions
-                    items={categories}
-                    exclude={[deleteCategoryPrompt.id]}
-                  />
-                </Form.Select>
+                {deleteType === "move" && (
+                  <Form.Select
+                    aria-label="Select Category"
+                    id="parentId"
+                    name="parentId"
+                    ref={newParentIdRef}
+                  >
+                    <option value={""}>No parent (root)</option>
+                    <CategoriesOptions
+                      items={categories}
+                      exclude={[deleteCategoryPrompt.id]}
+                    />
+                  </Form.Select>
+                )}
               </Form.Group>
             </Form>
           </Modal.Body>
@@ -165,9 +166,19 @@ export const CategoriesScreen: React.FC = () => {
               size="lg"
               onClick={() => {
                 if (deleteType === "all") {
-                  deleteCategory(deleteCategoryPrompt.id).then(() => {
-                    alert("deleted");
-                  });
+                  deleteCategory(deleteCategoryPrompt.id)
+                    .then(() => {
+                      navigate("", {
+                        replace: true,
+                        state: "reload",
+                      });
+                    })
+                    .catch(() => {
+                      alert("Could not delete this category");
+                    })
+                    .finally(() => {
+                      setDeleteCategoryPrompt(undefined);
+                    });
                 } else {
                   const deleteOptions: DeleteOptions = {
                     type: deleteType,
@@ -175,11 +186,19 @@ export const CategoriesScreen: React.FC = () => {
                       ? Number(newParentIdRef.current.value)
                       : null,
                   };
-                  deleteCategory(deleteCategoryPrompt.id, deleteOptions).then(
-                    () => {
-                      alert("deleted");
-                    }
-                  );
+                  deleteCategory(deleteCategoryPrompt.id, deleteOptions)
+                    .then(() => {
+                      navigate("", {
+                        replace: true,
+                        state: "reload",
+                      });
+                    })
+                    .catch(() => {
+                      alert("Could not delete this category");
+                    })
+                    .finally(() => {
+                      setDeleteCategoryPrompt(undefined);
+                    });
                 }
               }}
             >

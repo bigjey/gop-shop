@@ -1,4 +1,4 @@
-type Category = {
+export type Category = {
   id: number;
   name: string;
   isActive: boolean;
@@ -7,8 +7,8 @@ type Category = {
   children?: Category[];
 };
 
-type CategoryFormValues = Omit<Category, "id" | "children">;
+export type CategoryFormValues = Omit<Category, "id" | "children">;
 
-type DeleteOptions =
+export type DeleteOptions =
   | { type: "all" }
   | { type: "move"; newParentId: number | null };

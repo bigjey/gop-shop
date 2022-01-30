@@ -18,8 +18,8 @@ type CategoryFormProps = {
 export const CategoryForm: React.FC<CategoryFormProps> = (props) => {
   const [categories, setCategories] = useState<Category[]>([]);
   const [category, setCategory] = useState<Category>();
-  const [isLoading, setIsLoading] = useState<Boolean>(true);
-  const [error, setError] = useState<any>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [error, setError] = useState<unknown>(null);
 
   const formRef = React.useRef<HTMLFormElement>(null);
 

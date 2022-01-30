@@ -9,8 +9,8 @@ import { CategoriesOptions } from "../../components/CategoryOptions";
 
 export const CategoriesScreen: React.FC = () => {
   const [categories, setCategories] = React.useState<Category[]>([]);
-  const [isMounted, setMounted] = React.useState<Boolean>(false);
-  const [isLoading, setIsLoading] = React.useState<Boolean>(true);
+  const [isMounted, setMounted] = React.useState<boolean>(false);
+  const [isLoading, setIsLoading] = React.useState<boolean>(true);
   const [deleteType, setDeleteType] = React.useState<"all" | "move">("all");
   const [deleteCategoryPrompt, setDeleteCategoryPrompt] =
     React.useState<Category>();
@@ -121,7 +121,7 @@ export const CategoriesScreen: React.FC = () => {
         >
           <Modal.Body>
             <h4>Category {deleteCategoryPrompt.name} has children</h4>
-            <p>Please select how you wanna deal with it's children</p>
+            <p>Please select how you wanna deal with the children</p>
             <hr />
             <Form>
               <Form.Group>

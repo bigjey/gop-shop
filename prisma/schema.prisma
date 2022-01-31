@@ -24,9 +24,14 @@ model Category {
 }
 
 model Product {
-  id         Int       @id @default(autoincrement())
-  name       String
-  price      Float
-  categoryId Int?
-  category   Category? @relation(fields: [categoryId], references: [id])
+  id          Int       @id @default(autoincrement())
+  name        String
+  price       Decimal   @db.Decimal(10, 2)
+  description String?
+  isAvailable Boolean   @default(true)
+  isActive    Boolean   @default(true)
+  isFeatured  Boolean   @default(false)
+  saleValue   Int?
+  categoryId  Int?
+  category    Category? @relation(fields: [categoryId], references: [id])
 }

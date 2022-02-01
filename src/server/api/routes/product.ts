@@ -1,19 +1,47 @@
-import express, { Request, Response, NextFunction } from "express";
-import { Prisma, PrismaClient } from "@prisma/client";
+import express, { Request, Response, NextFunction } from 'express';
+import { Prisma, PrismaClient } from '@prisma/client';
+import {
+  AdminProductsFilter,
+  PaginationOptions,
+  SortOptions,
+} from '../../../shared/types';
 
 const prisma = new PrismaClient({
   rejectOnNotFound: true,
-  errorFormat: "pretty",
-  log: ["query", "info", "warn", "error"],
+  errorFormat: 'pretty',
+  log: ['query', 'info', 'warn', 'error'],
 });
 
 export const productRouter = express.Router();
 
 productRouter
-  .route("/products")
+  .route('/products')
   .get(async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const products = await prisma.product.findMany();
+      const query = req.query as AdminProductsFilter &
+        SortOptions &
+        PaginationOptions;
+      const {
+        sortField = 'name',
+        sortOrder = 'asc',
+        perPage = '2',
+        page = '1',
+      } = query;
+      const take = parseInt(perPage);
+      if (Number.isNaN(take) || take < 1) {
+        res.status(400).send('perPage must be a positive number');
+        return;
+      }
+      const skip = parseInt(page);
+      if (Number.isNaN(skip) || skip < 1) {
+        res.status(400).send('Page must be a positive number');
+        return;
+      }
+      const products = await prisma.product.findMany({
+        orderBy: { [sortField]: sortOrder },
+        take,
+        skip: (skip - 1) * take,
+      });
       res.json(products);
       return;
     } catch (error) {
@@ -35,7 +63,7 @@ productRouter
   });
 
 productRouter
-  .route("/products/:id")
+  .route('/products/:id')
   .put(async (req: Request, res: Response, next: NextFunction) => {
     try {
       const id = Number(req.params.id);

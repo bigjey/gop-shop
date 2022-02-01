@@ -27,7 +27,7 @@ model Category {
 model Product {
   id          Int       @id @default(autoincrement())
   name        String
-  price       Decimal   @db.Decimal(10, 2)
+  price       Float     @default(0.0)
   description String?
   isAvailable Boolean   @default(true)
   isActive    Boolean   @default(true)

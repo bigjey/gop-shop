@@ -1,6 +1,6 @@
 import express, { Request, Response, NextFunction } from "express";
 import { PrismaClient } from "@prisma/client";
-import { createDataTree } from "../../utils/treeBuilder";
+import { categoriesListToTree } from "../../utils/treeBuilder";
 
 const prisma = new PrismaClient({
   rejectOnNotFound: true,
@@ -32,7 +32,7 @@ categoryRouter
       const categories = await prisma.category.findMany({
         orderBy: { sortOrder: "asc" },
       });
-      const catTree = createDataTree(categories);
+      const catTree = categoriesListToTree(categories);
       res.send(catTree);
       return;
     } catch (error) {

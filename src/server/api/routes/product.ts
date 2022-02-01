@@ -22,26 +22,43 @@ productRouter
   })
   .post(async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const {
-        name,
-        price = 0.0,
-        description,
-        isAvailable = true,
-        isActive = true,
-        isFeatured = false,
-        saleValue = 0,
-        categoryId = null,
-      }: Prisma.ProductUncheckedCreateInput = req.body;
+      const data = req.body as Prisma.ProductUncheckedCreateInput;
+      delete data.id;
       const product = await prisma.product.create({
-        data: {
-          name,
-          price,
-          description,
-          isAvailable,
-          isActive,
-          isFeatured,
-          saleValue,
-          categoryId,
+        data,
+      });
+      res.json(product);
+      return;
+    } catch (error) {
+      next(error);
+    }
+  });
+
+productRouter
+  .route("/products/:id")
+  .put(async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const id = Number(req.params.id);
+      const data = req.body as Prisma.ProductUncheckedCreateInput;
+      delete data.id;
+      const product = await prisma.product.update({
+        where: {
+          id,
+        },
+        data,
+      });
+      res.json(product);
+      return;
+    } catch (error) {
+      next(error);
+    }
+  })
+  .delete(async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const id = Number(req.params.id);
+      const product = await prisma.product.delete({
+        where: {
+          id,
         },
       });
       res.json(product);

@@ -1,6 +1,7 @@
 import express from "express";
 import path from "path";
 import "dotenv/config";
+import { errorHandler } from "./utils/errorHandler";
 
 import { api } from "./api";
 
@@ -22,3 +23,5 @@ app.get("/admin/*", (req, res) => {
 app.get("*", (req, res) => {
   res.sendFile(path.resolve(projectRoot, "dist/client/shop/shop.html"));
 });
+
+app.use(errorHandler);

@@ -45,7 +45,6 @@ categoryRouter
   .post(async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { name, parentId = null, isActive } = req.body;
-      console.log(req.body);
       if (!name) {
         res.sendStatus(400);
         return;

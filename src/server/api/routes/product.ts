@@ -21,27 +21,125 @@ productRouter
       const query = req.query as AdminProductsFilter &
         SortOptions &
         PaginationOptions;
+
       const {
         sortField = 'name',
         sortOrder = 'asc',
         perPage = '2',
         page = '1',
       } = query;
-      const take = parseInt(perPage);
-      if (Number.isNaN(take) || take < 1) {
+
+      if (Number.isNaN(Number(perPage)) || Number(perPage) < 1) {
         res.status(400).send('perPage must be a positive number');
         return;
       }
-      const skip = parseInt(page);
-      if (Number.isNaN(skip) || skip < 1) {
+
+      if (Number.isNaN(Number(page)) || Number(page) < 1) {
         res.status(400).send('Page must be a positive number');
         return;
       }
+
+      const {
+        id = null,
+        name = null,
+        priceFrom = null,
+        priceTo = null,
+        categoryId = null,
+        isFeatured = null,
+        isActive = null,
+        isAvailable = null,
+      } = query;
+
+      const filterSettings: Prisma.ProductWhereInput = { AND: [] };
+
+      if (id === null) {
+        //
+      } else if (Array.isArray(id)) {
+        if (id.some((e) => Number.isNaN(Number(e)))) {
+          res.status(400).send('id must be of type int');
+          return;
+        }
+        filterSettings.id = { in: id.map((e) => Number(e)) };
+      } else {
+        if (Number.isNaN(Number(id))) {
+          res.status(400).send('id must be of type int');
+          return;
+        }
+        filterSettings.id = Number(id);
+      }
+
+      if (name && name.length > 0)
+        filterSettings.name = { contains: name, mode: 'insensitive' };
+
+      if (priceFrom === null) {
+        //
+      } else if (Number.isNaN(priceFrom) || Number(priceFrom) < 0) {
+        res.status(400).send('priceFrom cannot be NaN or be less then zero');
+        return;
+      } else {
+        (filterSettings.AND as Prisma.ProductWhereInput[]).push({
+          price: { gte: Number(priceFrom) },
+        });
+      }
+
+      if (priceTo === null) {
+        //
+      } else if (Number.isNaN(priceTo) || Number(priceTo) < 0) {
+        res.status(400).send('priceTo cannot be NaN or be less then zero');
+        return;
+      } else {
+        (filterSettings.AND as Prisma.ProductWhereInput[]).push({
+          price: { lte: Number(priceTo) },
+        });
+      }
+
+      if (categoryId === null) {
+        //
+      } else if (Array.isArray(categoryId)) {
+        if (categoryId.some((e) => Number.isNaN(Number(e)))) {
+          res.status(400).send('categoryId must be of type int');
+          return;
+        }
+        filterSettings.categoryId = { in: categoryId.map((e) => Number(e)) };
+      } else {
+        if (Number.isNaN(Number(categoryId))) {
+          res.status(400).send('categoryId must be of type int');
+          return;
+        }
+        filterSettings.categoryId = Number(categoryId);
+      }
+
+      if (isFeatured === null) {
+        //
+      } else if (isFeatured === 'true') {
+        filterSettings.isFeatured = true;
+      } else if (isFeatured === 'false') {
+        filterSettings.isFeatured = false;
+      }
+
+      if (isActive === null) {
+        //
+      } else if (isActive === 'true') {
+        filterSettings.isActive = true;
+      } else if (isActive === 'false') {
+        filterSettings.isActive = false;
+      }
+
+      if (isAvailable === null) {
+        //
+      } else if (isAvailable === 'true') {
+        filterSettings.isAvailable = true;
+      } else if (isAvailable === 'false') {
+        filterSettings.isAvailable = false;
+      }
+
       const products = await prisma.product.findMany({
         orderBy: { [sortField]: sortOrder },
-        take,
-        skip: (skip - 1) * take,
+        take: Number(perPage),
+        skip: (Number(page) - 1) * Number(perPage),
+        where: filterSettings,
       });
+
       res.json(products);
       return;
     } catch (error) {

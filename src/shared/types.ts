@@ -14,6 +14,7 @@ export type AdminProductsFilter = {
   isFeatured?: string;
   isActive?: string;
   isAvailable?: string;
+  id?: string | string[];
 };
 
 export type SortOptions = {

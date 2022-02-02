@@ -42,6 +42,15 @@ categoryRouter
 
 categoryRouter
   .route('/categories')
+  .get(async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const categories = await prisma.category.findMany();
+      res.send(categories);
+      return;
+    } catch (error) {
+      next(error);
+    }
+  })
   .post(async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { name, parentId = null, isActive } = req.body;

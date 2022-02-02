@@ -7,7 +7,7 @@ import {
 } from '../../../shared/types';
 
 const prisma = new PrismaClient({
-  rejectOnNotFound: true,
+  // rejectOnNotFound: true,
   errorFormat: 'pretty',
   log: ['query', 'info', 'warn', 'error'],
 });
@@ -161,7 +161,34 @@ productRouter
   });
 
 productRouter
+  .param('id', (req, res, next, id) => {
+    if (Number.isNaN(Number(id)) || Number(id) < 1) {
+      res.status(400).send('id must be int');
+      return;
+    }
+    next();
+  })
   .route('/products/:id')
+  .get(async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const id = Number(req.params.id);
+      const product = await prisma.product.findUnique({
+        where: {
+          id,
+        },
+      });
+
+      if (!product) {
+        res.status(404).send('Category not found');
+        return;
+      }
+
+      res.json(product);
+      return;
+    } catch (error) {
+      next(error);
+    }
+  })
   .put(async (req: Request, res: Response, next: NextFunction) => {
     try {
       const id = Number(req.params.id);

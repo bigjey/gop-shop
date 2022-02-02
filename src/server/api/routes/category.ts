@@ -1,22 +1,22 @@
-import express, { Request, Response, NextFunction } from "express";
-import { PrismaClient } from "@prisma/client";
-import { categoriesListToTree } from "../../utils/treeBuilder";
+import express, { Request, Response, NextFunction } from 'express';
+import { PrismaClient } from '@prisma/client';
+import { categoriesListToTree } from '../../utils/treeBuilder';
 
 const prisma = new PrismaClient({
   rejectOnNotFound: true,
-  errorFormat: "pretty",
-  log: ["query", "info", "warn", "error"],
+  errorFormat: 'pretty',
+  log: ['query', 'info', 'warn', 'error'],
 });
 
 export const categoryRouter = express.Router();
 
 categoryRouter
-  .route("/categories/root")
+  .route('/categories/root')
   .get(async (req: Request, res: Response, next: NextFunction) => {
     try {
       const categories = await prisma.category.findMany({
         where: { parentId: null },
-        orderBy: { sortOrder: "asc" },
+        orderBy: { sortOrder: 'asc' },
       });
       res.send(categories);
       return;
@@ -26,11 +26,11 @@ categoryRouter
   });
 
 categoryRouter
-  .route("/categories/tree")
+  .route('/categories/tree')
   .get(async (req: Request, res: Response, next: NextFunction) => {
     try {
       const categories = await prisma.category.findMany({
-        orderBy: { sortOrder: "asc" },
+        orderBy: { sortOrder: 'asc' },
       });
       const catTree = categoriesListToTree(categories);
       res.send(catTree);
@@ -41,7 +41,7 @@ categoryRouter
   });
 
 categoryRouter
-  .route("/categories")
+  .route('/categories')
   .post(async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { name, parentId = null, isActive } = req.body;
@@ -64,14 +64,21 @@ categoryRouter
   });
 
 categoryRouter
-  .route("/categories/:id")
+  .param('id', (req, res, next, id) => {
+    if (Number.isNaN(Number(id)) || Number(id) < 1) {
+      res.status(400).send('id must be int');
+      return;
+    }
+    next();
+  })
+  .route('/categories/:id')
   .get(async (req: Request, res: Response, next: NextFunction) => {
     try {
       const category = await prisma.category.findUnique({
         where: { id: Number(req.params.id) },
       });
       if (!category) {
-        res.status(404).send("Category not found");
+        res.status(404).send('Category not found');
         return;
       }
       res.send(category);
@@ -100,7 +107,7 @@ categoryRouter
   })
   .delete(async (req: Request, res: Response, next: NextFunction) => {
     try {
-      if (req.body.type === "all") {
+      if (req.body.type === 'all') {
         const category = await prisma.category.delete({
           where: { id: Number(req.params.id) },
         });
@@ -108,7 +115,7 @@ categoryRouter
         return;
       }
 
-      if (req.body.type === "move") {
+      if (req.body.type === 'move') {
         const { newParentId } = req.body;
 
         const [updatedCategory, deletedCategoty] = await prisma.$transaction([
@@ -122,8 +129,8 @@ categoryRouter
             where: { id: Number(req.params.id) },
           }),
         ]);
-        console.log("Updated: ", updatedCategory);
-        console.log("Deleted: ", deletedCategoty);
+        console.log('Updated: ', updatedCategory);
+        console.log('Deleted: ', deletedCategoty);
         res.json({
           msg: `category has been assigned as a child to a category with id ${newParentId}`,
         });

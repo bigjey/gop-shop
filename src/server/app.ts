@@ -20,6 +20,8 @@ app.get("/admin/*", (req, res) => {
   res.sendFile(path.resolve(projectRoot, "dist/client/admin/admin.html"));
 });
 
+app.use(express.static(path.resolve(projectRoot, "src/shop")));
+
 app.get("*", (req, res) => {
   res.sendFile(path.resolve(projectRoot, "dist/client/shop/shop.html"));
 });

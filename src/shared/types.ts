@@ -17,6 +17,16 @@ export type AdminProductsFilter = {
   id?: string | string[];
 };
 
+export type AdminProductReviewsFilter = {
+  id?: number;
+  text?: string;
+  score?: number;
+  status?: 'new' | 'pending' | 'proofed';
+  userId?: number;
+  createdAt?: Date | string;
+  productId?: number;
+};
+
 export type ProductGetRelatedInfoOptions = {
   getReviews?: string;
 };

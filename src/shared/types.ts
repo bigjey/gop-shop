@@ -17,6 +17,10 @@ export type AdminProductsFilter = {
   id?: string | string[];
 };
 
+export type ProductGetRelatedInfoOptions = {
+  getReviews?: string;
+};
+
 export type SortOptions = {
   sortField?: string;
   sortOrder?: 'asc' | 'desc';

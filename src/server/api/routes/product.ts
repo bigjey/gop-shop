@@ -4,6 +4,7 @@ import {
   AdminProductsFilter,
   PaginationOptions,
   SortOptions,
+  ProductGetRelatedInfoOptions,
 } from '../../../shared/types';
 
 const prisma = new PrismaClient({
@@ -20,12 +21,14 @@ productRouter
     try {
       const query = req.query as AdminProductsFilter &
         SortOptions &
-        PaginationOptions;
+        PaginationOptions &
+        ProductGetRelatedInfoOptions;
 
+      //SORTING & PAGINATION
       const {
         sortField = 'name',
         sortOrder = 'asc',
-        perPage = '2',
+        perPage = '20',
         page = '1',
       } = query;
 
@@ -39,6 +42,7 @@ productRouter
         return;
       }
 
+      //FILTERING
       const {
         id = null,
         name = null,
@@ -133,11 +137,22 @@ productRouter
         filterSettings.isAvailable = false;
       }
 
+      //GETTING RELATED DATA
+      const { getReviews = 'false' } = query;
+      const includeSettings: Prisma.ProductInclude = {};
+
+      if (getReviews === 'true') {
+        includeSettings.reviews = true;
+      } else if (getReviews === 'false') {
+        includeSettings.reviews = false;
+      }
+
       const products = await prisma.product.findMany({
         orderBy: { [sortField]: sortOrder },
         take: Number(perPage),
         skip: (Number(page) - 1) * Number(perPage),
         where: filterSettings,
+        include: includeSettings,
       });
 
       res.json(products);

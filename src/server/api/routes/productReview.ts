@@ -251,6 +251,23 @@ productReviewRouter
           id,
         },
       });
+      const reviewsCount = await prisma.productReview.aggregate({
+        where: { productId: review.productId },
+        _avg: { score: true },
+      });
+
+      if (reviewsCount._avg.score) {
+        const rating = Number(reviewsCount._avg.score?.toFixed(2));
+
+        await prisma.product.update({
+          where: {
+            id: review.productId,
+          },
+          data: {
+            rating,
+          },
+        });
+      }
       res.json(review);
       return;
     } catch (error) {

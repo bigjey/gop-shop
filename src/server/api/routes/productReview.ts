@@ -149,10 +149,29 @@ productReviewRouter
     try {
       const data = req.body as Prisma.ProductReviewUncheckedCreateInput;
       delete data.id;
-      const product = await prisma.productReview.create({
+
+      const reviewsCount = await prisma.productReview.aggregate({
+        where: { productId: data.productId },
+        _avg: { score: true },
+      });
+
+      if (reviewsCount._avg.score) {
+        const rating = Number(reviewsCount._avg.score?.toFixed(2));
+
+        await prisma.product.update({
+          where: {
+            id: data.productId,
+          },
+          data: {
+            rating,
+          },
+        });
+      }
+
+      const review = await prisma.productReview.create({
         data,
       });
-      res.json(product);
+      res.json(review);
       return;
     } catch (error) {
       next(error);
@@ -199,6 +218,25 @@ productReviewRouter
         },
         data,
       });
+
+      const reviewsCount = await prisma.productReview.aggregate({
+        where: { productId: data.productId },
+        _avg: { score: true },
+      });
+
+      if (reviewsCount._avg.score) {
+        const rating = Number(reviewsCount._avg.score?.toFixed(2));
+
+        await prisma.product.update({
+          where: {
+            id: data.productId,
+          },
+          data: {
+            rating,
+          },
+        });
+      }
+
       res.json(review);
       return;
     } catch (error) {

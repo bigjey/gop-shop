@@ -1,13 +1,21 @@
-import "./CategoriesScreen.css";
+import './CategoriesScreen.css';
 
-import React, { useEffect } from "react";
-import { Button, Container, Row, Col, Modal, Form } from "react-bootstrap";
-import { Outlet, useLocation, useNavigate } from "react-router";
-import { deleteCategory, getCategoriesTree } from "../../api/categories";
-import classNames from "classnames";
-import { CategoriesOptions } from "../../components/CategoryOptions";
-import { Category } from "@prisma/client";
-import { DeleteOptions } from "../../../shared/types";
+import React, { useEffect } from 'react';
+import {
+  Button,
+  Container,
+  Row,
+  Col,
+  Modal,
+  Form,
+  Spinner,
+} from 'react-bootstrap';
+import { Outlet, useLocation, useNavigate } from 'react-router';
+import { deleteCategory, getCategoriesTree } from '../../api/categories';
+import classNames from 'classnames';
+import { CategoriesOptions } from '../../components/CategoryOptions';
+import { Category } from '@prisma/client';
+import { DeleteOptions } from '../../../shared/types';
 
 export const CategoriesScreen: React.FC = () => {
   const [categories, setCategories] = React.useState<
@@ -15,7 +23,7 @@ export const CategoriesScreen: React.FC = () => {
   >([]);
   const [isMounted, setMounted] = React.useState<boolean>(false);
   const [isLoading, setIsLoading] = React.useState<boolean>(true);
-  const [deleteType, setDeleteType] = React.useState<"all" | "move">("all");
+  const [deleteType, setDeleteType] = React.useState<'all' | 'move'>('all');
   const [deleteCategoryPrompt, setDeleteCategoryPrompt] =
     React.useState<Category>();
 
@@ -25,7 +33,7 @@ export const CategoriesScreen: React.FC = () => {
   const location = useLocation();
 
   useEffect(() => {
-    if (isMounted && location.state === "reload") {
+    if (isMounted && location.state === 'reload') {
       setIsLoading(true);
       getCategoriesTree().then((data) => {
         setCategories(data as (Category & { children?: Category[] })[]);
@@ -36,7 +44,7 @@ export const CategoriesScreen: React.FC = () => {
 
   useEffect(() => {
     setMounted(true);
-    if (location.state !== "reload") {
+    if (location.state !== 'reload') {
       setIsLoading(true);
       getCategoriesTree().then((data) => {
         setCategories(data as Category[]);
@@ -53,13 +61,13 @@ export const CategoriesScreen: React.FC = () => {
         if (confirm(`Delete ${category.name} category?`)) {
           deleteCategory(category.id)
             .then(() => {
-              navigate("", {
+              navigate('', {
                 replace: true,
-                state: "reload",
+                state: 'reload',
               });
             })
             .catch(() => {
-              alert("Could not delete this category");
+              alert('Could not delete this category');
             });
         }
       }
@@ -87,11 +95,11 @@ export const CategoriesScreen: React.FC = () => {
                 />
               </Form.Group>
             </Col>
-            <Col style={{ textAlign: "right" }}>
+            <Col style={{ textAlign: 'right' }}>
               <Button
                 size="lg"
                 onClick={() => {
-                  navigate("add");
+                  navigate('add');
                 }}
               >
                 Add Category
@@ -101,19 +109,26 @@ export const CategoriesScreen: React.FC = () => {
         </Container>
       </div>
       <div className="app-content-body">
-        {isLoading && <>loading</>}
         <Container>
-          {!isLoading && (
-            <div>
-              {categories.length ? (
-                <div className="categories-tree">
-                  <Categories items={categories} onDelete={onDeleteClick} />
-                </div>
-              ) : (
-                <div>No Categories yet</div>
-              )}
-            </div>
-          )}
+          <div className="data-loading-area">
+            {isLoading && (
+              <div className="data-loading-indicator">
+                <Spinner animation="border" variant="primary" />
+              </div>
+            )}
+            {categories.length > 0 && (
+              <div>
+                {categories.length > 0 ? (
+                  <div className="categories-tree">
+                    <Categories items={categories} onDelete={onDeleteClick} />
+                  </div>
+                ) : (
+                  <div>No Categories yet</div>
+                )}
+              </div>
+            )}
+            {!isLoading && !categories.length && 'No items yet'}
+          </div>
           <Outlet />
         </Container>
       </div>
@@ -134,30 +149,30 @@ export const CategoriesScreen: React.FC = () => {
               <Form.Group>
                 <Form.Check
                   name="deleteType"
-                  type={"radio"}
+                  type={'radio'}
                   label="Delete all children categories"
                   id="all"
-                  checked={deleteType === "all"}
-                  onChange={() => setDeleteType("all")}
+                  checked={deleteType === 'all'}
+                  onChange={() => setDeleteType('all')}
                 />
               </Form.Group>
               <Form.Group>
                 <Form.Check
                   name="deleteType"
-                  type={"radio"}
+                  type={'radio'}
                   label="Move children categories to another category"
                   id="move"
-                  checked={deleteType === "move"}
-                  onChange={() => setDeleteType("move")}
+                  checked={deleteType === 'move'}
+                  onChange={() => setDeleteType('move')}
                 />
-                {deleteType === "move" && (
+                {deleteType === 'move' && (
                   <Form.Select
                     aria-label="Select Category"
                     id="parentId"
                     name="parentId"
                     ref={newParentIdRef}
                   >
-                    <option value={""}>No parent (root)</option>
+                    <option value={''}>No parent (root)</option>
                     <CategoriesOptions
                       items={categories}
                       exclude={[deleteCategoryPrompt.id]}
@@ -172,16 +187,16 @@ export const CategoriesScreen: React.FC = () => {
               variant="danger"
               size="lg"
               onClick={() => {
-                if (deleteType === "all") {
+                if (deleteType === 'all') {
                   deleteCategory(deleteCategoryPrompt.id)
                     .then(() => {
-                      navigate("", {
+                      navigate('', {
                         replace: true,
-                        state: "reload",
+                        state: 'reload',
                       });
                     })
                     .catch(() => {
-                      alert("Could not delete this category");
+                      alert('Could not delete this category');
                     })
                     .finally(() => {
                       setDeleteCategoryPrompt(undefined);
@@ -195,13 +210,13 @@ export const CategoriesScreen: React.FC = () => {
                   };
                   deleteCategory(deleteCategoryPrompt.id, deleteOptions)
                     .then(() => {
-                      navigate("", {
+                      navigate('', {
                         replace: true,
-                        state: "reload",
+                        state: 'reload',
                       });
                     })
                     .catch(() => {
-                      alert("Could not delete this category");
+                      alert('Could not delete this category');
                     })
                     .finally(() => {
                       setDeleteCategoryPrompt(undefined);
@@ -230,21 +245,21 @@ const Categories: React.FC<{
       {items.map((item) => (
         <React.Fragment key={item.name}>
           <div
-            className={classNames(["categories-tree__item"], {
-              "categories-tree__item--inactive": !item.isActive,
+            className={classNames(['categories-tree__item'], {
+              'categories-tree__item--inactive': !item.isActive,
             })}
             style={{ marginLeft: level * 30, maxWidth: 600 }}
           >
-            <Row style={{ alignItems: "center" }}>
+            <Row style={{ alignItems: 'center' }}>
               <Col xs={12} lg={true}>
-                {item.name}{" "}
+                {item.name}{' '}
                 {!item.isActive && (
                   <div className="categories-tree__inactive-label">
                     inactive
                   </div>
                 )}
               </Col>
-              <Col xs={12} lg={true} style={{ textAlign: "right" }}>
+              <Col xs={12} lg={true} style={{ textAlign: 'right' }}>
                 <div className="categories-tree__controls">
                   <Button
                     variant="outline-primary"
@@ -253,7 +268,7 @@ const Categories: React.FC<{
                     }}
                   >
                     edit
-                  </Button>{" "}
+                  </Button>{' '}
                   <Button
                     variant="outline-danger"
                     onClick={() => {

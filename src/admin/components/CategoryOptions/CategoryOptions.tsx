@@ -1,8 +1,8 @@
-import { Category } from "@prisma/client";
-import React from "react";
+import React from 'react';
+import { CategoryWithChildren } from '../../../shared/types';
 
 export const CategoriesOptions: React.FC<{
-  items?: (Category & { children?: Category[] })[];
+  items?: CategoryWithChildren[];
   level?: number;
   exclude?: number[];
 }> = (props) => {
@@ -22,7 +22,7 @@ export const CategoriesOptions: React.FC<{
         return (
           <React.Fragment key={c.id}>
             <option value={c.id} className={`level-${level}`}>
-              {"".padStart(level * 3, "   ")} {c.name}
+              {''.padStart(level * 3, '   ')} {c.name}
             </option>
             <CategoriesOptions
               items={c.children}

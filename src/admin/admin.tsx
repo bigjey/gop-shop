@@ -1,17 +1,18 @@
-import "bootstrap/dist/css/bootstrap.css";
-import "./admin.css";
+import 'bootstrap/dist/css/bootstrap.css';
+import './admin.css';
 
-import React from "react";
-import { render } from "react-dom";
-import { BrowserRouter } from "react-router-dom";
+import React from 'react';
+import { render } from 'react-dom';
+import { BrowserRouter } from 'react-router-dom';
 
-import { AdminApp } from "./components/AdminApp";
-import { Route, Routes } from "react-router-dom";
-import { HomeScreen } from "./screens/HomeScreen";
-import { CategoriesScreen } from "./screens/CategoriesScreen";
-import { CategoryForm } from "./components/CategoryForm";
+import { AdminApp } from './components/AdminApp';
+import { Route, Routes } from 'react-router-dom';
+import { HomeScreen } from './screens/HomeScreen';
+import { CategoriesScreen } from './screens/CategoriesScreen';
+import { CategoryForm } from './components/CategoryForm';
+import { ProductsScreen } from './screens/ProductsScreen';
 
-const mountNode = document.getElementById("app");
+const mountNode = document.getElementById('app');
 
 const App = () => {
   return (
@@ -22,6 +23,10 @@ const App = () => {
           <Route path="categories" element={<CategoriesScreen />}>
             <Route path="add" element={<CategoryForm mode="create" />} />
             <Route path="edit/:id" element={<CategoryForm mode="edit" />} />
+          </Route>
+          <Route path="products" element={<ProductsScreen />}>
+            {/* <Route path="add" element={<CategoryForm mode="create" />} /> */}
+            {/* <Route path="edit/:id" element={<CategoryForm mode="edit" />} /> */}
           </Route>
           <Route
             path="*"

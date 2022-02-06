@@ -1,7 +1,7 @@
-import "./AdminApp.css";
+import './AdminApp.css';
 
-import React from "react";
-import { NavLink, Outlet } from "react-router-dom";
+import React from 'react';
+import { NavLink, Outlet } from 'react-router-dom';
 
 export const AdminApp: React.FC = () => {
   return (
@@ -12,6 +12,7 @@ export const AdminApp: React.FC = () => {
             <NavLink to="/">Dashboard</NavLink>
             <NavLink to="/categories">Categories</NavLink>
             <NavLink to="/products">Products</NavLink>
+            <NavLink to="/reviews">Product Reviews</NavLink>
           </nav>
         </div>
         <div className="app-content">

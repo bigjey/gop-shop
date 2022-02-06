@@ -31,8 +31,8 @@ export type ProductGetRelatedInfoOptions = {
   getReviews?: string;
 };
 
-export type SortOptions = {
-  sortField?: string;
+export type SortOptions<T> = {
+  sortField?: keyof T;
   sortOrder?: 'asc' | 'desc';
 };
 

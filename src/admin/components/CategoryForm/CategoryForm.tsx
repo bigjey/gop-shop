@@ -1,19 +1,19 @@
-import { Category, Prisma } from "@prisma/client";
-import { useFormik } from "formik";
-import React, { useEffect, useState } from "react";
-import { Button, Modal, Form, Row, Col } from "react-bootstrap";
-import { useNavigate, useParams } from "react-router";
-import * as Yup from "yup";
+import { Category, Prisma } from '@prisma/client';
+import { useFormik } from 'formik';
+import React, { useEffect, useState } from 'react';
+import { Button, Modal, Form, Row, Col } from 'react-bootstrap';
+import { useNavigate, useParams } from 'react-router';
+import * as Yup from 'yup';
 import {
   getCategoriesTree,
   getCategory,
   createCategory,
   updateCategory,
-} from "../../api/categories";
-import { CategoriesOptions } from "../CategoryOptions";
+} from '../../api/categories';
+import { CategoriesOptions } from '../CategoryOptions';
 
 type CategoryFormProps = {
-  mode?: "edit" | "create";
+  mode?: 'edit' | 'create';
 };
 
 export const CategoryForm: React.FC<CategoryFormProps> = (props) => {
@@ -24,27 +24,27 @@ export const CategoryForm: React.FC<CategoryFormProps> = (props) => {
 
   const formRef = React.useRef<HTMLFormElement>(null);
 
-  const { mode = "create" } = props;
+  const { mode = 'create' } = props;
 
   const navigate = useNavigate();
   const params = useParams<{ id: string }>();
 
   const { id } = params;
 
-  const wrongMode = mode === "edit" && !id;
+  const wrongMode = mode === 'edit' && !id;
 
   if (wrongMode) {
-    console.error("wtf");
+    console.error('wtf');
   }
 
-  const title = mode === "create" ? "New Category" : "Edit category";
+  const title = mode === 'create' ? 'New Category' : 'Edit category';
 
   useEffect(() => {
     setIsLoading(true);
 
     Promise.all([
       getCategoriesTree(),
-      mode === "edit" && id ? getCategory(Number(id)) : null,
+      mode === 'edit' && id ? getCategory(Number(id)) : null,
     ])
       .then(([categories, category]) => {
         setCategories(categories as Category[]);
@@ -65,13 +65,13 @@ export const CategoryForm: React.FC<CategoryFormProps> = (props) => {
     enableReinitialize: true,
     initialValues: {
       isActive: true,
-      name: "",
+      name: '',
       parentId: null,
       sortOrder: 0,
       ...category,
     },
     validationSchema: Yup.object({
-      name: Yup.string().required("Required"),
+      name: Yup.string().required('Required'),
     }),
     onSubmit: (values) => {
       if (values.parentId) {
@@ -80,10 +80,10 @@ export const CategoryForm: React.FC<CategoryFormProps> = (props) => {
         values.parentId = null;
       }
 
-      if (mode === "edit") {
+      if (mode === 'edit') {
         return updateCategory(Number(id), values)
           .then(() => {
-            navigate("/categories", { state: "reload" });
+            navigate('/categories', { state: 'reload' });
           })
           .catch((e) => {
             console.log(e);
@@ -91,7 +91,7 @@ export const CategoryForm: React.FC<CategoryFormProps> = (props) => {
       } else {
         return createCategory(values)
           .then(() => {
-            navigate("/categories", { state: "reload" });
+            navigate('/categories', { state: 'reload' });
           })
           .catch((e) => {
             console.log(e);
@@ -106,7 +106,7 @@ export const CategoryForm: React.FC<CategoryFormProps> = (props) => {
       centered
       size="lg"
       onHide={() => {
-        navigate("/categories");
+        navigate('/categories');
       }}
     >
       {isLoading && <div>loading</div>}
@@ -123,7 +123,7 @@ export const CategoryForm: React.FC<CategoryFormProps> = (props) => {
               <Form.Group
                 as={Row}
                 className="mb-3"
-                style={{ alignItems: "center" }}
+                style={{ alignItems: 'center' }}
               >
                 <Form.Label column sm={2} htmlFor="isActive">
                   Active
@@ -171,10 +171,10 @@ export const CategoryForm: React.FC<CategoryFormProps> = (props) => {
                     onChange={formik.handleChange}
                     value={formik.values.parentId || undefined}
                   >
-                    <option value={""}>No parent (root)</option>
+                    <option value={''}>No parent (root)</option>
                     <CategoriesOptions
                       items={categories}
-                      exclude={mode === "edit" && id ? [Number(id)] : []}
+                      exclude={mode === 'edit' && id ? [Number(id)] : []}
                     />
                   </Form.Select>
                 </Col>

@@ -1,5 +1,5 @@
 import express, { Request, Response, NextFunction } from 'express';
-import { Prisma, PrismaClient } from '@prisma/client';
+import { Prisma, PrismaClient, ProductReview } from '@prisma/client';
 import {
   AdminProductReviewsFilter,
   PaginationOptions,
@@ -19,7 +19,7 @@ productReviewRouter
   .get(async (req: Request, res: Response, next: NextFunction) => {
     try {
       const query = req.query as AdminProductReviewsFilter &
-        SortOptions &
+        SortOptions<ProductReview> &
         PaginationOptions;
 
       //SORTING & PAGINATION

@@ -107,7 +107,7 @@ export const ProductForm: React.FC<ProductFormProps> = (props) => {
           </Form.Label>
           <Col sm={3}>
             <InputGroup>
-              <InputGroup.Text>$</InputGroup.Text>
+              <InputGroup.Text>%</InputGroup.Text>
               <Form.Control
                 type="text"
                 placeholder=""

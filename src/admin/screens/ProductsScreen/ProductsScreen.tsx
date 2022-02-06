@@ -3,7 +3,7 @@ import React from 'react';
 import { Button, Col, Container, Row, Spinner } from 'react-bootstrap';
 import { useLocation, useNavigate } from 'react-router';
 import { AdminProductsFilter, SortOptions } from '../../../shared/types';
-import { getProducts } from '../../api/products';
+import { deleteProduct, getProducts } from '../../api/products';
 import { ProductsTable } from '../../components/ProductsTable';
 
 export const ProductsScreen: React.FC = () => {
@@ -43,6 +43,16 @@ export const ProductsScreen: React.FC = () => {
     setProductsSort(newSort);
   }, []);
 
+  const onDeleteClick = React.useCallback((product: Product) => {
+    if (confirm(`Delete ${product.name}?`)) {
+      deleteProduct(product.id)
+        .then(() => {
+          navigate('', { replace: true });
+        })
+        .catch(console.log);
+    }
+  }, []);
+
   return (
     <>
       <div className="app-content-title">
@@ -58,7 +68,7 @@ export const ProductsScreen: React.FC = () => {
               <Button
                 size="lg"
                 onClick={() => {
-                  // navigate('add');
+                  navigate('/products/add');
                 }}
               >
                 Add Product
@@ -80,6 +90,7 @@ export const ProductsScreen: React.FC = () => {
                 items={products}
                 sort={productsSort}
                 onSortChange={onSortChange}
+                onDeleteClick={onDeleteClick}
               />
             )}
             {!isLoading && !products.length && 'No items yet'}

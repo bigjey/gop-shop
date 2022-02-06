@@ -1,16 +1,18 @@
 import React from 'react';
 import { Product } from '@prisma/client';
-import { Table } from 'react-bootstrap';
+import { Button, Table } from 'react-bootstrap';
 import { SortOptions } from '../../../shared/types';
+import { Link } from 'react-router-dom';
 
 type ProductsTableProps = {
   items?: Product[];
   sort: SortOptions<Product>;
   onSortChange(newSortField: SortOptions<Product>): void;
+  onDeleteClick(product: Product): void;
 };
 
 export const ProductsTable: React.FC<ProductsTableProps> = (props) => {
-  const { items = [], onSortChange, sort } = props;
+  const { items = [], onSortChange, sort, onDeleteClick } = props;
 
   if (!items.length) {
     return <>No items</>;
@@ -28,7 +30,7 @@ export const ProductsTable: React.FC<ProductsTableProps> = (props) => {
   };
 
   return (
-    <Table>
+    <Table hover>
       <thead>
         <tr>
           <td onClick={() => updateSortField('id')}>
@@ -43,25 +45,40 @@ export const ProductsTable: React.FC<ProductsTableProps> = (props) => {
           <td onClick={() => updateSortField('categoryId')}>
             category <SortDirection {...sort} field="categoryId" />
           </td>
+          <td></td>
         </tr>
       </thead>
       <tbody>
         {items.map((item) => (
-          <ProductTableRow key={item.id} {...item} />
+          <ProductTableRow
+            key={item.id}
+            product={item}
+            onDelete={onDeleteClick}
+          />
         ))}
       </tbody>
     </Table>
   );
 };
 
-export const ProductTableRow: React.FC<Product> = (props) => {
-  const { id, name, price, categoryId } = props;
+export const ProductTableRow: React.FC<{
+  product: Product;
+  onDelete(product: Product): void;
+}> = (props) => {
+  const { product, onDelete } = props;
   return (
     <tr>
-      <td>{id}</td>
-      <td>{name}</td>
-      <td>{price}</td>
-      <td>{categoryId || null}</td>
+      <td>{product.id}</td>
+      <td>
+        <Link to={`/products/${product.id}`}>{product.name}</Link>
+      </td>
+      <td>{product.price}</td>
+      <td>{product.categoryId || null}</td>
+      <td align="right">
+        <Button size="sm" variant="danger" onClick={() => onDelete(product)}>
+          delete
+        </Button>
+      </td>
     </tr>
   );
 };

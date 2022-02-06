@@ -2,7 +2,7 @@ import { Prisma, ProductReview } from '@prisma/client';
 import React from 'react';
 import { Modal } from 'react-bootstrap';
 import { useLocation, useNavigate, useParams } from 'react-router';
-import { createReview, getReview } from '../../api/reviews';
+import { updateReview, getReview } from '../../api/reviews';
 import { ReviewForm } from '../../components/ReviewForm';
 
 export const EditProductReviewScreen: React.FC = () => {
@@ -18,9 +18,9 @@ export const EditProductReviewScreen: React.FC = () => {
 
   const onSubmit = React.useCallback(
     (data: Prisma.ProductReviewUncheckedCreateInput) => {
-      createReview(data)
+      updateReview(Number(id), data)
         .then(() => {
-          navigate(`/reviews/${data.id}`);
+          navigate('', { replace: true });
         })
         .catch(() => alert('error'));
     },

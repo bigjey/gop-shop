@@ -27,6 +27,19 @@ export const createReview = (
   }).then<ProductReview>(processFetchResponse);
 };
 
+export const updateReview = (
+  id: number,
+  data: Prisma.ProductReviewUncheckedCreateInput
+): Promise<ProductReview> => {
+  return fetch(`${API_URL}/${id}`, {
+    method: 'put',
+    body: JSON.stringify(data),
+    headers: {
+      'content-type': 'application/json',
+    },
+  }).then<ProductReview>(processFetchResponse);
+};
+
 export const deleteReview = (id: number): Promise<ProductReview> => {
   return fetch(`${API_URL}/${id}`, {
     method: 'delete',

@@ -11,6 +11,8 @@ import { HomeScreen } from './screens/HomeScreen';
 import { CategoriesScreen } from './screens/CategoriesScreen';
 import { CategoryForm } from './components/CategoryForm';
 import { ProductsScreen } from './screens/ProductsScreen';
+import { AddProductScreen } from './screens/AddProductScreeen';
+import { EditProductScreen } from './screens/EditProductScreeen';
 
 const mountNode = document.getElementById('app');
 
@@ -24,8 +26,9 @@ const App = () => {
             <Route path="add" element={<CategoryForm mode="create" />} />
             <Route path="edit/:id" element={<CategoryForm mode="edit" />} />
           </Route>
+          <Route path="products/add" element={<AddProductScreen />} />
+          <Route path="products/:id" element={<EditProductScreen />} />
           <Route path="products" element={<ProductsScreen />}>
-            {/* <Route path="add" element={<CategoryForm mode="create" />} /> */}
             {/* <Route path="edit/:id" element={<CategoryForm mode="edit" />} /> */}
           </Route>
           <Route

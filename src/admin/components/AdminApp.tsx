@@ -1,5 +1,5 @@
 import './AdminApp.css';
-
+import { Toaster } from 'react-hot-toast';
 import React from 'react';
 import { NavLink, Outlet } from 'react-router-dom';
 
@@ -7,6 +7,7 @@ export const AdminApp: React.FC = () => {
   return (
     <>
       <React.StrictMode>
+        <Toaster />
         <div className="app-sidebar">
           <nav className="app-header">
             <NavLink to="/">Dashboard</NavLink>

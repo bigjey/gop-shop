@@ -2,6 +2,8 @@ import { Prisma } from '@prisma/client';
 import React from 'react';
 import { Modal } from 'react-bootstrap';
 import { useNavigate } from 'react-router';
+import toast from 'react-hot-toast';
+
 import { createReview } from '../../api/reviews';
 import { ReviewForm } from '../../components/ReviewForm';
 
@@ -10,11 +12,16 @@ export const AddProductReviewScreen: React.FC = () => {
 
   const onSubmit = React.useCallback(
     (data: Prisma.ProductReviewUncheckedCreateInput) => {
-      createReview(data)
-        .then((review) => {
+      toast.promise(
+        createReview(data).then((review) => {
           navigate(`/reviews/${review.id}`);
-        })
-        .catch(() => alert('error'));
+        }),
+        {
+          loading: 'Creating...',
+          success: <b>Created!</b>,
+          error: <b>Not created.</b>,
+        }
+      );
     },
     []
   );

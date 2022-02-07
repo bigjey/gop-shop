@@ -2,6 +2,8 @@ import { Prisma, ProductReview } from '@prisma/client';
 import React from 'react';
 import { Modal } from 'react-bootstrap';
 import { useLocation, useNavigate, useParams } from 'react-router';
+import toast from 'react-hot-toast';
+
 import { updateReview, getReview } from '../../api/reviews';
 import { ReviewForm } from '../../components/ReviewForm';
 
@@ -18,11 +20,17 @@ export const EditProductReviewScreen: React.FC = () => {
 
   const onSubmit = React.useCallback(
     (data: Prisma.ProductReviewUncheckedCreateInput) => {
-      updateReview(Number(id), data)
-        .then(() => {
+      toast.promise(
+        updateReview(Number(id), data).then(() => {
           navigate('', { replace: true });
-        })
-        .catch(() => alert('error'));
+          return Promise.resolve();
+        }),
+        {
+          loading: 'Saving...',
+          success: <b>Saved!</b>,
+          error: <b>Not saved.</b>,
+        }
+      );
     },
     []
   );

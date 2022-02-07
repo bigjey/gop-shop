@@ -7,16 +7,16 @@ const prisma = new PrismaClient({
   log: ['query', 'info', 'warn', 'error'],
 });
 
-export const productSpecPresetGroupItemRouter = express.Router();
+export const productSpecValueRouter = express.Router();
 
-productSpecPresetGroupItemRouter
-  .route('/productSpecPresetGroupItems')
+productSpecValueRouter
+  .route('/productSpecValues')
   .get(async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const specPresetGroupItem = await prisma.specPresetGroupItem.findMany({
+      const specValue = await prisma.specValue.findMany({
         orderBy: { id: 'asc' },
       });
-      res.send(specPresetGroupItem);
+      res.send(specValue);
       return;
     } catch (error) {
       next(error);
@@ -24,18 +24,18 @@ productSpecPresetGroupItemRouter
   })
   .post(async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const data = req.body as Prisma.SpecPresetGroupItemUncheckedCreateInput;
-      const specPresetGroupItem = await prisma.specPresetGroupItem.create({
+      const data = req.body as Prisma.SpecValueUncheckedCreateInput;
+      const specValue = await prisma.specValue.create({
         data,
       });
-      res.json(specPresetGroupItem);
+      res.json(specValue);
       return;
     } catch (error) {
       next(error);
     }
   });
 
-productSpecPresetGroupItemRouter
+productSpecValueRouter
   .param('id', (req, res, next, id) => {
     if (Number.isNaN(Number(id)) || Number(id) < 1) {
       res.status(400).send('id must be int');
@@ -43,22 +43,22 @@ productSpecPresetGroupItemRouter
     }
     next();
   })
-  .route('/productSpecPresetGroupItems/:id')
+  .route('/productSpecValues/:id')
   .get(async (req: Request, res: Response, next: NextFunction) => {
     try {
       const id = Number(req.params.id);
-      const specPresetGroupItem = await prisma.specPresetGroupItem.findUnique({
+      const specValue = await prisma.specValue.findUnique({
         where: {
           id,
         },
       });
 
-      if (!specPresetGroupItem) {
-        res.status(404).send('Preset group item not found');
+      if (!specValue) {
+        res.status(404).send('Spec value not found');
         return;
       }
 
-      res.json(specPresetGroupItem);
+      res.json(specValue);
       return;
     } catch (error) {
       next(error);
@@ -67,11 +67,11 @@ productSpecPresetGroupItemRouter
   .put(async (req: Request, res: Response, next: NextFunction) => {
     try {
       const data = req.body as Prisma.SpecPresetUncheckedUpdateInput;
-      const specPresetGroupItem = await prisma.specPresetGroupItem.update({
+      const specValue = await prisma.specValue.update({
         where: { id: Number(req.params.id) },
         data,
       });
-      res.send(specPresetGroupItem);
+      res.send(specValue);
       return;
     } catch (error) {
       next(error);
@@ -79,10 +79,10 @@ productSpecPresetGroupItemRouter
   })
   .delete(async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const specPresetGroupItem = await prisma.specPresetGroupItem.delete({
+      const specValue = await prisma.specValue.delete({
         where: { id: Number(req.params.id) },
       });
-      res.send(specPresetGroupItem);
+      res.send(specValue);
       return;
     } catch (error) {
       next(error);

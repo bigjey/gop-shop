@@ -54,7 +54,7 @@ productSpecPresetGroupRouter
       });
 
       if (!specPresetGroup) {
-        res.status(404).send('Spec not found');
+        res.status(404).send('Preset group not found');
         return;
       }
 

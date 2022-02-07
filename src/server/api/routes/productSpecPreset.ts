@@ -54,7 +54,7 @@ productSpecPresetRouter
       });
 
       if (!specPreset) {
-        res.status(404).send('Spec not found');
+        res.status(404).send('Spec preset not found');
         return;
       }
 

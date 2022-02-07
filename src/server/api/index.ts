@@ -5,6 +5,7 @@ import { productReviewRouter } from './routes/productReview';
 import { productSpecRouter } from './routes/productSpec';
 import { productSpecPresetRouter } from './routes/productSpecPreset';
 import { productSpecPresetGroupRouter } from './routes/productSpecPresetGroup';
+import { productSpecPresetGroupItemRouter } from './routes/productSpecPresetGroupItem';
 
 export const api = express.Router();
 
@@ -14,3 +15,4 @@ api.use(productReviewRouter);
 api.use(productSpecRouter);
 api.use(productSpecPresetRouter);
 api.use(productSpecPresetGroupRouter);
+api.use(productSpecPresetGroupItemRouter);

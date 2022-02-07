@@ -66,12 +66,11 @@ productSpecPresetGroupRouter
   })
   .put(async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { name } = req.body;
+      const data = req.body as Prisma.SpecPresetGroupUncheckedUpdateInput;
+
       const specPresetGroup = await prisma.specPresetGroup.update({
         where: { id: Number(req.params.id) },
-        data: {
-          name,
-        },
+        data,
       });
       res.send(specPresetGroup);
       return;

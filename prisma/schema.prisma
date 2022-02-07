@@ -25,19 +25,19 @@ model Category {
 }
 
 model Product {
-  id          Int                @id @default(autoincrement())
+  id          Int             @id @default(autoincrement())
   name        String
-  price       Float              @default(0.0)
+  price       Float           @default(0.0)
   description String?
-  isAvailable Boolean            @default(true)
-  isActive    Boolean            @default(true)
-  isFeatured  Boolean            @default(false)
+  isAvailable Boolean         @default(true)
+  isActive    Boolean         @default(true)
+  isFeatured  Boolean         @default(false)
   saleValue   Int?
   categoryId  Int?
-  category    Category?          @relation(fields: [categoryId], references: [id])
+  category    Category?       @relation(fields: [categoryId], references: [id])
   reviews     ProductReview[]
-  specValues  ProductSpecValue[]
-  rating      Float?             @default(0.0)
+  specValues  SpecValue[]
+  rating      Float?          @default(0.0)
 }
 
 enum ReviewStatus {
@@ -79,16 +79,16 @@ model SpecPresetGroup {
 }
 
 model SpecPresetGroupItem {
-  id            Int                @id @default(autoincrement())
+  id            Int             @id @default(autoincrement())
   presetGroupId Int
   specId        Int
-  sortOrder     Int                @default(1)
-  presetGroup   SpecPresetGroup    @relation(fields: [presetGroupId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  values        ProductSpecValue[]
-  spec          Spec               @relation(fields: [specId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  sortOrder     Int             @default(1)
+  presetGroup   SpecPresetGroup @relation(fields: [presetGroupId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  values        SpecValue[]
+  spec          Spec            @relation(fields: [specId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 }
 
-model ProductSpecValue {
+model SpecValue {
   id                    Int                 @id @default(autoincrement())
   productId             Int
   specPresetGroupItemId Int

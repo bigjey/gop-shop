@@ -235,3 +235,34 @@ productRouter
       next(error);
     }
   });
+
+productRouter
+  .param('id', (req, res, next, id) => {
+    if (Number.isNaN(Number(id)) || Number(id) < 1) {
+      res.status(400).send('id must be int');
+      return;
+    }
+    next();
+  })
+  .route('/products/:id/specs')
+  .put(async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const id = Number(req.params.id);
+      const data: Omit<Prisma.SpecValueUncheckedCreateInput, 'productId'>[] =
+        req.body;
+
+      const [deletedSpecValues, createdSpecValues] = await prisma.$transaction([
+        prisma.specValue.deleteMany({
+          where: { productId: id },
+        }),
+
+        prisma.specValue.createMany({
+          data: data.map((el) => ({ ...el, productId: id })),
+        }),
+      ]);
+      res.json({ deletedSpecValues, createdSpecValues });
+      return;
+    } catch (error) {
+      next(error);
+    }
+  });

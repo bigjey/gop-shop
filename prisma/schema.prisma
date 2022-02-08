@@ -25,19 +25,21 @@ model Category {
 }
 
 model Product {
-  id          Int             @id @default(autoincrement())
-  name        String
-  price       Float           @default(0.0)
-  description String?
-  isAvailable Boolean         @default(true)
-  isActive    Boolean         @default(true)
-  isFeatured  Boolean         @default(false)
-  saleValue   Int?
-  categoryId  Int?
-  category    Category?       @relation(fields: [categoryId], references: [id])
-  reviews     ProductReview[]
-  specValues  SpecValue[]
-  rating      Float?          @default(0.0)
+  id           Int             @id @default(autoincrement())
+  name         String
+  price        Float           @default(0.0)
+  description  String?
+  isAvailable  Boolean         @default(true)
+  isActive     Boolean         @default(true)
+  isFeatured   Boolean         @default(false)
+  saleValue    Int?
+  categoryId   Int?
+  specPresetId Int?
+  category     Category?       @relation(fields: [categoryId], references: [id])
+  reviews      ProductReview[]
+  specValues   SpecValue[]
+  specPresets  SpecPreset[]    @relation(fields: [specPresetId], references: [id])
+  rating       Float?          @default(0.0)
 }
 
 enum ReviewStatus {
@@ -67,6 +69,7 @@ model SpecPreset {
   id           Int               @id @default(autoincrement())
   name         String            @unique()
   presetGroups SpecPresetGroup[]
+  products     Product[]
 }
 
 model SpecPresetGroup {

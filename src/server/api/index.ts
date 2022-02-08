@@ -27,7 +27,14 @@ cloudinary.v2.config();
 api.post('/upload', async function (req, res) {
   const file = req.files?.ololo as fileUpload.UploadedFile;
   if (file) {
-    await file.mv(path.resolve(process.cwd(), 'assets', file.name));
+    try {
+      const result = await file.mv(
+        path.resolve(process.cwd(), 'assets', file.name)
+      );
+      console.log({ result });
+    } catch (err) {
+      console.log({ err });
+    }
     res.send('okay');
   } else {
     res.send('not okay');

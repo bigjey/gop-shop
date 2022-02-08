@@ -6,7 +6,7 @@ export const HomeScreen: React.FC = () => {
       <div className="app-content-title">
         <h1>Dashboard</h1>
         <form encType="multipart/form-data" action="/api/upload" method="post">
-          <input type="file" name="ololo" />
+          <input type="file" name="images" multiple />
           <button>upload</button>
         </form>
       </div>

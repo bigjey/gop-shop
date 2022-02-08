@@ -23,24 +23,34 @@ api.use(productSpecValueRouter);
 
 cloudinary.v2.config();
 
-api.post('/upload', async function (req, res) {
-  const file = req.files?.ololo as fileUpload.UploadedFile;
-  if (file) {
-    try {
-      cloudinary.v2.uploader
-        .upload_stream(
-          { public_id: file.name, format: file.mimetype.split('/')[1] },
-          function (err, result) {
-            if (err) {
-              console.log({ err });
-              res.send('not okay');
-            } else {
-              console.log({ result });
-              res.send('okay');
-            }
+function upload(file: fileUpload.UploadedFile) {
+  return new Promise((resolve, reject) => {
+    cloudinary.v2.uploader
+      .upload_stream(
+        { public_id: file.name, format: file.mimetype.split('/')[1] },
+        function (err, result) {
+          if (err) {
+            console.log({ err });
+
+            reject(err);
+          } else {
+            console.log({ result });
+            resolve(undefined);
           }
-        )
-        .end(file.data);
+        }
+      )
+      .end(file.data);
+  });
+}
+
+api.post('/upload', async function (req, res) {
+  const files = req.files?.images as fileUpload.UploadedFile[];
+  if (files) {
+    try {
+      for (const file of files) {
+        await upload(file);
+      }
+      res.send('okay');
     } catch (err) {
       console.log({ err });
       res.send('not okay');

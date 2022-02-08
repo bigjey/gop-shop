@@ -9,7 +9,6 @@ import { productSpecPresetGroupItemRouter } from './routes/productSpecPresetGrou
 import { productSpecValueRouter } from './routes/productSpecValue';
 import cloudinary from 'cloudinary';
 import fileUpload from 'express-fileupload';
-import path from 'path';
 
 export const api = express.Router();
 
@@ -28,14 +27,24 @@ api.post('/upload', async function (req, res) {
   const file = req.files?.ololo as fileUpload.UploadedFile;
   if (file) {
     try {
-      const result = await file.mv(
-        path.resolve(process.cwd(), 'assets', file.name)
-      );
-      console.log({ result });
+      cloudinary.v2.uploader
+        .upload_stream(
+          { public_id: file.name, format: file.mimetype.split('/')[1] },
+          function (err, result) {
+            if (err) {
+              console.log({ err });
+              res.send('not okay');
+            } else {
+              console.log({ result });
+              res.send('okay');
+            }
+          }
+        )
+        .end(file.data);
     } catch (err) {
       console.log({ err });
+      res.send('not okay');
     }
-    res.send('okay');
   } else {
     res.send('not okay');
   }

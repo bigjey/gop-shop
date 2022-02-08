@@ -16,6 +16,9 @@ import { EditProductScreen } from './screens/EditProductScreeen';
 import { ProductReviewsScreen } from './screens/ProductReviewsScreen';
 import { AddProductReviewScreen } from './screens/AddProductReviewScreen';
 import { EditProductReviewScreen } from './screens/EditProductReviewScreen';
+import { SpecsScreen } from './screens/SpecsScreen';
+import { AddSpecScreen } from './screens/AddSpecScreen';
+import { EditSpecScreen } from './screens/EditSpecScreen';
 
 const mountNode = document.getElementById('app');
 
@@ -35,6 +38,10 @@ const App = () => {
           <Route path="reviews" element={<ProductReviewsScreen />}>
             <Route path="add" element={<AddProductReviewScreen />} />
             <Route path=":id" element={<EditProductReviewScreen />} />
+          </Route>
+          <Route path="specs" element={<SpecsScreen />}>
+            <Route path="add" element={<AddSpecScreen />} />
+            <Route path=":id" element={<EditSpecScreen />} />
           </Route>
           <Route
             path="*"

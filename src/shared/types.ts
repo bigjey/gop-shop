@@ -1,10 +1,24 @@
-import { Category } from '@prisma/client';
+import {
+  Category,
+  Spec,
+  SpecPreset,
+  SpecPresetGroup,
+  SpecPresetGroupItem,
+} from '@prisma/client';
 
 export type DeleteOptions =
   | { type: 'all' }
   | { type: 'move'; newParentId: number | null };
 
 export type CategoryWithChildren = Category & { children?: Category[] };
+
+export type SpecPresetWithIncludes = SpecPreset & {
+  presetGroups?: (SpecPresetGroup & {
+    presetGroupItems?: (SpecPresetGroupItem & {
+      spec?: Spec;
+    })[];
+  })[];
+};
 
 export type AdminProductsFilter = {
   name?: string;

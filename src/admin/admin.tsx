@@ -17,8 +17,11 @@ import { ProductReviewsScreen } from './screens/ProductReviewsScreen';
 import { AddProductReviewScreen } from './screens/AddProductReviewScreen';
 import { EditProductReviewScreen } from './screens/EditProductReviewScreen';
 import { SpecsScreen } from './screens/SpecsScreen';
-import { AddSpecScreen } from './screens/AddSpecScreen';
 import { EditSpecScreen } from './screens/EditSpecScreen';
+import { SpecPresetsScreen } from './screens/SpecPresetsScreen';
+import { AddSpecScreen } from './screens/AddSpecScreen';
+import { AddSpecPresetScreen } from './screens/AddSpecPresetScreen';
+import { EditSpecPresetScreen } from './screens/EditSpecPresetScreen';
 
 const mountNode = document.getElementById('app');
 
@@ -43,6 +46,13 @@ const App = () => {
             <Route path="add" element={<AddSpecScreen />} />
             <Route path=":id" element={<EditSpecScreen />} />
           </Route>
+          <Route path="specPresets" element={<SpecPresetsScreen />}>
+            <Route path="add" element={<AddSpecPresetScreen />} />
+          </Route>
+          <Route
+            path="specPresets/:id"
+            element={<EditSpecPresetScreen />}
+          ></Route>
           <Route
             path="*"
             element={

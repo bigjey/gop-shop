@@ -77,3 +77,12 @@
   justify-content: center;
   background: #fffb;
 }
+
+.spec-preset-group-header {
+}
+.spec-preset-group-header:hover .spec-preset-group-header__controls {
+  visibility: visible;
+}
+.spec-preset-group-header__controls {
+  visibility: hidden;
+}

@@ -51,6 +51,23 @@ productSpecPresetRouter
         where: {
           id,
         },
+        include: {
+          presetGroups: {
+            include: {
+              presetGroupItems: {
+                include: {
+                  spec: true,
+                },
+                orderBy: {
+                  sortOrder: 'asc',
+                },
+              },
+            },
+            orderBy: {
+              sortOrder: 'asc',
+            },
+          },
+        },
       });
 
       if (!specPreset) {

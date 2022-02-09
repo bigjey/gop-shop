@@ -51,7 +51,18 @@ export const EditProductScreen: React.FC = () => {
               </div>
             )}
             {!isLoading && product ? (
-              <ProductForm key={id} onSubmit={onSubmit} data={product} />
+              <>
+                <ProductForm key={id} onSubmit={onSubmit} data={product} />
+                <form
+                  encType="multipart/form-data"
+                  action={`/api/products/${id}/gallery`}
+                  method="post"
+                >
+                  <br />
+                  <input type="file" name="images" multiple />
+                  <button>Upload</button>
+                </form>
+              </>
             ) : null}
           </div>
         </Container>

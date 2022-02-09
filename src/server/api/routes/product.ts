@@ -282,8 +282,9 @@ productRouter
   })
   .route('/products/:id/gallery')
   .post(async function (req, res, next) {
-    const files = req.files?.images as fileUpload.UploadedFile[];
-    // console.log(files);
+    const files = (
+      Array.isArray(req.files?.images) ? req.files?.images : [req.files?.images]
+    ) as fileUpload.UploadedFile[];
     const productId = Number(req.params.id);
     if (files) {
       try {

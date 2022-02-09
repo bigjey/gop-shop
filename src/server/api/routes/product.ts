@@ -1,8 +1,6 @@
 import express, { Request, Response, NextFunction } from 'express';
 import { Prisma, PrismaClient, Product } from '@prisma/client';
-import cloudinary from 'cloudinary';
-import fileUpload from 'express-fileupload';
-import { upload } from '../../utils/imageUploader';
+
 import {
   AdminProductsFilter,
   PaginationOptions,
@@ -15,8 +13,6 @@ const prisma = new PrismaClient({
   errorFormat: 'pretty',
   log: ['query', 'info', 'warn', 'error'],
 });
-
-cloudinary.v2.config();
 
 export const productRouter = express.Router();
 
@@ -270,48 +266,5 @@ productRouter
       return;
     } catch (error) {
       next(error);
-    }
-  });
-
-productRouter
-  .param('id', (req, res, next, id) => {
-    if (Number.isNaN(Number(id)) || Number(id) < 1) {
-      res.status(400).send('id must be int');
-      return;
-    }
-    next();
-  })
-  .route('/products/:id/gallery')
-  .post(async function (req, res, next) {
-    const files = (
-      Array.isArray(req.files?.images) ? req.files?.images : [req.files?.images]
-    ) as fileUpload.UploadedFile[];
-    const productId = Number(req.params.id);
-    if (files) {
-      try {
-        const uploaded = [] as Prisma.ProductImageUncheckedCreateInput[];
-        let sortOrder = 1;
-        for (const file of files) {
-          const result: cloudinary.UploadApiResponse = (await upload(
-            file
-          )) as cloudinary.UploadApiResponse;
-          uploaded.push({
-            publicId: result.public_id,
-            productId,
-            sortOrder,
-          });
-          sortOrder++;
-        }
-        const dbResponse = await prisma.productImage.createMany({
-          data: uploaded,
-        });
-        console.log(uploaded);
-        res.json(dbResponse);
-      } catch (err) {
-        console.log({ err });
-        next(err);
-      }
-    } else {
-      res.send('not okay');
     }
   });

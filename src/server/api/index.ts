@@ -7,6 +7,7 @@ import { productSpecPresetRouter } from './routes/productSpecPreset';
 import { productSpecPresetGroupRouter } from './routes/productSpecPresetGroup';
 import { productSpecPresetGroupItemRouter } from './routes/productSpecPresetGroupItem';
 import { productSpecValueRouter } from './routes/productSpecValue';
+import { productGalleryRouter } from './routes/productGallery';
 
 export const api = express.Router();
 
@@ -18,3 +19,4 @@ api.use(productSpecPresetRouter);
 api.use(productSpecPresetGroupRouter);
 api.use(productSpecPresetGroupItemRouter);
 api.use(productSpecValueRouter);
+api.use(productGalleryRouter);

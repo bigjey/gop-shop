@@ -43,6 +43,7 @@ export type AdminProductReviewsFilter = {
 
 export type ProductGetRelatedInfoOptions = {
   getReviews?: string;
+  getImages?: string;
 };
 
 export type SortOptions<T> = {

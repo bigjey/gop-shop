@@ -139,13 +139,19 @@ productRouter
       }
 
       //GETTING RELATED DATA
-      const { getReviews = 'false' } = query;
+      const { getReviews = 'false', getImages = 'false' } = query;
       const includeSettings: Prisma.ProductInclude = {};
 
       if (getReviews === 'true') {
         includeSettings.reviews = true;
       } else if (getReviews === 'false') {
         includeSettings.reviews = false;
+      }
+
+      if (getImages === 'true') {
+        includeSettings.images = true;
+      } else if (getImages === 'false') {
+        includeSettings.images = false;
       }
 
       const products = await prisma.product.findMany({

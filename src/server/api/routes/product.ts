@@ -196,6 +196,7 @@ productRouter
         where: {
           id,
         },
+        include: { images: { orderBy: { sortOrder: 'asc' } } },
       });
 
       if (!product) {

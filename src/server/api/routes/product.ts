@@ -5,7 +5,7 @@ import {
   AdminProductsFilter,
   PaginationOptions,
   SortOptions,
-  ProductGetRelatedInfoOptions,
+  ProductGetRelatedDataOptions,
 } from '../../../shared/types';
 
 const prisma = new PrismaClient({
@@ -23,7 +23,7 @@ productRouter
       const query = req.query as AdminProductsFilter &
         SortOptions<Product> &
         PaginationOptions &
-        ProductGetRelatedInfoOptions;
+        ProductGetRelatedDataOptions;
 
       //SORTING & PAGINATION
       const {
@@ -194,6 +194,23 @@ productRouter
   .get(async (req: Request, res: Response, next: NextFunction) => {
     try {
       const id = Number(req.params.id);
+      const query = req.query as ProductGetRelatedDataOptions;
+      //GETTING RELATED DATA
+      const { getReviews = 'false', getImages = 'false' } = query;
+      const includeSettings: Prisma.ProductInclude = {};
+
+      if (getReviews === 'true') {
+        includeSettings.reviews = true;
+      } else if (getReviews === 'false') {
+        includeSettings.reviews = false;
+      }
+
+      if (getImages === 'true') {
+        includeSettings.images = true;
+      } else if (getImages === 'false') {
+        includeSettings.images = false;
+      }
+
       const product = await prisma.product.findUnique({
         where: {
           id,
@@ -202,7 +219,7 @@ productRouter
       });
 
       if (!product) {
-        res.status(404).send('Category not found');
+        res.status(404).send('Product not found');
         return;
       }
 

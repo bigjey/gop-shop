@@ -41,7 +41,7 @@ export type AdminProductReviewsFilter = {
   productId?: number;
 };
 
-export type ProductGetRelatedInfoOptions = {
+export type ProductGetRelatedDataOptions = {
   getReviews?: string;
   getImages?: string;
 };

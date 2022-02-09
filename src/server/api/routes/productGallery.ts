@@ -63,3 +63,46 @@ productGalleryRouter
       return;
     }
   });
+
+productGalleryRouter
+  .param('id', (req, res, next, id) => {
+    if (Number.isNaN(Number(id)) || Number(id) < 1) {
+      res.status(400).send('id must be int');
+      return;
+    }
+    next();
+  })
+  .param('imageId', (req, res, next, id) => {
+    if (Number.isNaN(Number(id)) || Number(id) < 1) {
+      res.status(400).send('imageId must be int');
+      return;
+    }
+    next();
+  })
+  .route('/products/:id/gallery/:imageId')
+  .put(async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const id = Number(req.params.imageId);
+      const data = req.body as Prisma.ProductImageUncheckedUpdateInput;
+      const image = await prisma.productImage.update({
+        where: { id },
+        data,
+      });
+      res.send(image);
+      return;
+    } catch (error) {
+      next(error);
+    }
+  })
+  .delete(async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const id = Number(req.params.imageId);
+      const image = await prisma.productImage.delete({
+        where: { id },
+      });
+      res.send(image);
+      return;
+    } catch (error) {
+      next(error);
+    }
+  });

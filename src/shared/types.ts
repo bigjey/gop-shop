@@ -55,3 +55,7 @@ export type PaginationOptions = {
   perPage?: string;
   page?: string;
 };
+
+export type AuthTokenPayload = {
+  id: number;
+};

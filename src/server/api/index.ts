@@ -8,9 +8,11 @@ import { productSpecPresetGroupRouter } from './routes/productSpecPresetGroup';
 import { productSpecPresetGroupItemRouter } from './routes/productSpecPresetGroupItem';
 import { productSpecValueRouter } from './routes/productSpecValue';
 import { productGalleryRouter } from './routes/productGallery';
+import { authRouter } from './routes/auth';
 
 export const api = express.Router();
 
+api.use(authRouter);
 api.use(categoryRouter);
 api.use(productRouter);
 api.use(productReviewRouter);

@@ -110,3 +110,17 @@ model ProductImage {
   productId Int
   product   Product @relation(fields: [productId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 }
+
+enum UserRole {
+  SuperAdmin
+  Admin
+  Customer
+}
+
+model User {
+  id       Int      @id @default(autoincrement())
+  name     String?
+  email    String   @unique
+  password String
+  role     UserRole
+}

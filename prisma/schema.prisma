@@ -124,3 +124,10 @@ model User {
   password String
   role     UserRole
 }
+
+model ResetToken {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  token     String
+  createdAt DateTime @default(now()) @db.Timestamp(6)
+}

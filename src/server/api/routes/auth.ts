@@ -160,6 +160,42 @@ authRouter
   });
 
 authRouter
+  .route('/auth/resend')
+  .post(async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { email } = req.body as {
+        email: string;
+      };
+      const user = await prisma.user.findUnique({
+        where: { email },
+      });
+
+      if (!user) {
+        res.status(400);
+        return;
+      }
+
+      await prisma.resetToken.deleteMany({ where: { userId: user.id } });
+
+      const resetToken = randomBytes(32).toString('hex');
+
+      const hash = await bcrypt.hash(resetToken, 10);
+
+      await prisma.resetToken.create({
+        data: {
+          userId: user.id,
+          token: hash,
+        },
+      });
+      res.json({
+        link: `${process.env.BASE_URL}/api/auth/reset/${user.id}/${resetToken}`,
+      });
+    } catch (error) {
+      next(error);
+    }
+  });
+
+authRouter
   .param('id', (req, res, next, id) => {
     if (Number.isNaN(Number(id)) || Number(id) < 1) {
       res.status(400).send('id must be int');

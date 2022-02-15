@@ -3,7 +3,7 @@ import { Prisma, PrismaClient } from '@prisma/client';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 import { randomBytes } from 'crypto';
-import nodemailer from 'nodemailer';
+// import nodemailer from 'nodemailer';
 import { AuthTokenPayload } from '../../../shared/types';
 import authTokenValidator from '../../utils/authTokenValidator';
 
@@ -13,15 +13,15 @@ const prisma = new PrismaClient({
   log: ['query', 'info', 'warn', 'error'],
 });
 
-const transport = nodemailer.createTransport({
-  host: 'smtp.emaillabs.net.pl',
-  port: 587,
-  secure: false, // upgrade later with STARTTLS
-  auth: {
-    user: process.env.NODEMAILER_LOGIN,
-    pass: process.env.NODEMAILER_PWD,
-  },
-});
+// const transport = nodemailer.createTransport({
+//   host: 'smtp.emaillabs.net.pl',
+//   port: 587,
+//   secure: false, // upgrade later with STARTTLS
+//   auth: {
+//     user: process.env.NODEMAILER_LOGIN,
+//     pass: process.env.NODEMAILER_PWD,
+//   },
+// });
 
 export const authRouter = express.Router();
 

@@ -2,6 +2,15 @@ import express from 'express';
 import path from 'path';
 import 'dotenv/config';
 import fileUpload from 'express-fileupload';
+import expressSession from 'express-session';
+import { PrismaSessionStore } from '@quixo3/prisma-session-store';
+import { PrismaClient } from '@prisma/client';
+
+const prisma = new PrismaClient({
+  // rejectOnNotFound: true,
+  errorFormat: 'pretty',
+  log: ['query', 'info', 'warn', 'error'],
+});
 
 import { errorHandler } from './utils/errorHandler';
 
@@ -15,6 +24,22 @@ const projectRoot = process.cwd();
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+
+app.use(
+  expressSession({
+    cookie: {
+      maxAge: 7 * 24 * 60 * 60 * 1000, // ms
+    },
+    secret: process.env.SESSION_SECRET as string,
+    resave: true,
+    saveUninitialized: true,
+    store: new PrismaSessionStore(prisma, {
+      checkPeriod: 2 * 60 * 1000, //ms
+      dbRecordIdIsSessionId: true,
+      dbRecordIdFunction: undefined,
+    }),
+  })
+);
 
 app.use('/api', api);
 

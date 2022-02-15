@@ -131,3 +131,10 @@ model ResetToken {
   token     String
   createdAt DateTime @default(now()) @db.Timestamp(6)
 }
+
+model Session {
+  id        String   @id
+  sid       String   @unique
+  data      String
+  expiresAt DateTime
+}

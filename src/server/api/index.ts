@@ -13,6 +13,7 @@ import { authRouter } from './routes/auth';
 export const api = express.Router();
 
 api.use(authRouter);
+
 api.use(categoryRouter);
 api.use(productRouter);
 api.use(productReviewRouter);

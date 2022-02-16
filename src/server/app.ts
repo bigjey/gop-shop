@@ -18,12 +18,22 @@ import { api } from './api';
 
 export const app = express();
 
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
+
 app.use(fileUpload());
 
 const projectRoot = process.cwd();
 
-app.use(express.urlencoded({ extended: true }));
-app.use(express.json());
+app.use(express.static(path.resolve(projectRoot, 'dist/client')));
+app.use(express.static(path.resolve(projectRoot, 'src/shop')));
+
+declare module 'express-session' {
+  interface SessionData {
+    userId: number;
+    lastSignIn: number;
+  }
+}
 
 app.use(
   expressSession({
@@ -43,13 +53,9 @@ app.use(
 
 app.use('/api', api);
 
-app.use(express.static(path.resolve(projectRoot, 'dist/client')));
-
 app.get('/admin/*', (req, res) => {
   res.sendFile(path.resolve(projectRoot, 'dist/client/admin/admin.html'));
 });
-
-app.use(express.static(path.resolve(projectRoot, 'src/shop')));
 
 app.get('*', (req, res) => {
   res.sendFile(path.resolve(projectRoot, 'dist/client/shop/shop.html'));

@@ -26,6 +26,39 @@ const prisma = new PrismaClient({
 export const authRouter = express.Router();
 
 authRouter
+  .route('/auth')
+  .get(async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      if (
+        !req.session.lastSignIn ||
+        Date.now() - req.session.lastSignIn > 2 * 60 * 1000
+      ) {
+        res.sendStatus(401);
+        return;
+      }
+
+      if (!req.session.userId) {
+        res.sendStatus(401);
+        return;
+      }
+
+      const user = await prisma.user.findUnique({
+        where: { id: req.session.userId },
+      });
+
+      if (!user) {
+        res.sendStatus(401);
+        return;
+      }
+
+      res.json();
+      return;
+    } catch (error) {
+      next(error);
+    }
+  });
+
+authRouter
   .route('/auth/register')
   .post(async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -42,7 +75,7 @@ authRouter
       if (!email || !password || !repeatPassword) {
         res
           .status(400)
-          .send('Email, password, repeatedPassword are required fields');
+          .send('Email, password, repeatPassword are required fields');
         return;
       }
 
@@ -88,17 +121,20 @@ authRouter
 
       const match = await bcrypt.compare(password, user.password);
 
-      const payload: AuthTokenPayload = { id: user.id };
+      // const payload: AuthTokenPayload = { id: user.id };
 
       if (match) {
-        const token = jwt.sign(
-          payload,
-          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-          process.env.JWT_SECRET!,
-          { expiresIn: '6h' }
-        );
+        req.session.userId = user.id;
+        req.session.lastSignIn = Date.now();
+        // const token = jwt.sign(
+        //   payload,
+        //   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        //   process.env.JWT_SECRET!,
+        //   { expiresIn: '6h' }
+        // );
 
-        res.json({ token });
+        // res.json({ token });
+        res.end();
         return;
       } else {
         res.status(400).send('Wrong email or password');

@@ -29,24 +29,7 @@ authRouter
   .route('/auth')
   .get(async (req: Request, res: Response, next: NextFunction) => {
     try {
-      if (
-        !req.session.lastSignIn ||
-        Date.now() - req.session.lastSignIn > 2 * 60 * 1000
-      ) {
-        res.sendStatus(401);
-        return;
-      }
-
-      if (!req.session.userId) {
-        res.sendStatus(401);
-        return;
-      }
-
-      const user = await prisma.user.findUnique({
-        where: { id: req.session.userId },
-      });
-
-      if (!user) {
+      if (!res.locals.user) {
         res.sendStatus(401);
         return;
       }

@@ -1,5 +1,5 @@
 import express, { Request, Response, NextFunction } from 'express';
-import { Prisma, PrismaClient, Product } from '@prisma/client';
+import { Prisma, PrismaClient, Product, UserRole } from '@prisma/client';
 
 import {
   AdminProductsFilter,
@@ -7,6 +7,7 @@ import {
   SortOptions,
   ProductGetRelatedDataOptions,
 } from '../../../shared/types';
+import { checkUserRole } from '../../utils/checkUserRole';
 
 const prisma = new PrismaClient({
   // rejectOnNotFound: true,
@@ -168,19 +169,22 @@ productRouter
       next(error);
     }
   })
-  .post(async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      const data = req.body as Prisma.ProductUncheckedCreateInput;
-      delete data.id;
-      const product = await prisma.product.create({
-        data,
-      });
-      res.json(product);
-      return;
-    } catch (error) {
-      next(error);
+  .post(
+    checkUserRole([UserRole.Admin, UserRole.SuperAdmin]),
+    async (req: Request, res: Response, next: NextFunction) => {
+      try {
+        const data = req.body as Prisma.ProductUncheckedCreateInput;
+        delete data.id;
+        const product = await prisma.product.create({
+          data,
+        });
+        res.json(product);
+        return;
+      } catch (error) {
+        next(error);
+      }
     }
-  });
+  );
 
 productRouter
   .param('id', (req, res, next, id) => {

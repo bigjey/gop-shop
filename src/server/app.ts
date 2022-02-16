@@ -5,16 +5,17 @@ import fileUpload from 'express-fileupload';
 import expressSession from 'express-session';
 import { PrismaSessionStore } from '@quixo3/prisma-session-store';
 import { PrismaClient } from '@prisma/client';
+import { extractUserFromSession } from './utils/extractUserFromSession';
+
+import { errorHandler } from './utils/errorHandler';
+
+import { api } from './api';
 
 const prisma = new PrismaClient({
   // rejectOnNotFound: true,
   errorFormat: 'pretty',
   log: ['query', 'info', 'warn', 'error'],
 });
-
-import { errorHandler } from './utils/errorHandler';
-
-import { api } from './api';
 
 export const app = express();
 
@@ -50,6 +51,8 @@ app.use(
     }),
   })
 );
+
+app.use(extractUserFromSession);
 
 app.use('/api', api);
 

@@ -4,6 +4,7 @@ import {
   SpecPreset,
   SpecPresetGroup,
   SpecPresetGroupItem,
+  UserRole,
 } from '@prisma/client';
 
 export type DeleteOptions =
@@ -58,4 +59,10 @@ export type PaginationOptions = {
 
 export type AuthTokenPayload = {
   id: number;
+};
+
+export type UserAuth = {
+  id: number;
+  name: string;
+  role: UserRole;
 };

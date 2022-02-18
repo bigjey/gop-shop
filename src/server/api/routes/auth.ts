@@ -1,10 +1,10 @@
 import express, { Request, Response, NextFunction } from 'express';
-import { Prisma, PrismaClient } from '@prisma/client';
+import { Prisma, PrismaClient, User } from '@prisma/client';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 import { randomBytes } from 'crypto';
 // import nodemailer from 'nodemailer';
-import { AuthTokenPayload } from '../../../shared/types';
+import { AuthTokenPayload, UserAuth } from '../../../shared/types';
 import authTokenValidator from '../../utils/authTokenValidator';
 
 const prisma = new PrismaClient({
@@ -29,12 +29,18 @@ authRouter
   .route('/auth')
   .get(async (req: Request, res: Response, next: NextFunction) => {
     try {
-      if (!res.locals.user) {
-        res.sendStatus(401);
-        return;
+      const user: User | undefined = res.locals.user;
+      if (!user) {
+        return res.json(null);
       }
 
-      res.json();
+      const payload: UserAuth = {
+        id: user.id,
+        name: user.name || 'anon',
+        role: user.role,
+      };
+
+      res.json(payload);
       return;
     } catch (error) {
       next(error);

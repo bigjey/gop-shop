@@ -17,13 +17,11 @@ export const extractUserFromSession = async (
       !req.session.lastSignIn ||
       Date.now() - req.session.lastSignIn > 2 * 60 * 1000
     ) {
-      res.sendStatus(401);
-      return;
+      return next();
     }
 
     if (!req.session.userId) {
-      res.sendStatus(401);
-      return;
+      return next();
     }
 
     const user = await prisma.user.findUnique({
@@ -31,15 +29,13 @@ export const extractUserFromSession = async (
     });
 
     if (!user) {
-      res.sendStatus(401);
-      return;
+      return next();
     }
 
     res.locals.user = user;
 
-    next();
-    return;
+    return next();
   } catch (error) {
-    next(error);
+    return next(error);
   }
 };

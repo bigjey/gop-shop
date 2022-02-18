@@ -1,6 +1,6 @@
-import { Category, Prisma } from "@prisma/client";
-import { DeleteOptions } from "../../shared/types";
-import { processFetchResponse } from "../../shared/utils";
+import { Category, Prisma } from '@prisma/client';
+import { DeleteOptions } from '../../shared/types';
+import { processFetchResponse } from '../../shared/utils';
 
 const API_URL = `/api/categories`;
 
@@ -17,33 +17,33 @@ export const updateCategory = (
   data: Prisma.CategoryUncheckedUpdateInput
 ) => {
   return fetch(`${API_URL}/${id}`, {
-    method: "put",
+    method: 'put',
     body: JSON.stringify(data),
     headers: {
-      "content-type": "application/json",
+      'content-type': 'application/json',
     },
   }).then<void>(processFetchResponse);
 };
 
 export const createCategory = (data: Prisma.CategoryUncheckedCreateInput) => {
   return fetch(`${API_URL}`, {
-    method: "post",
+    method: 'post',
     body: JSON.stringify(data),
     headers: {
-      "content-type": "application/json",
+      'content-type': 'application/json',
     },
   }).then<void>(processFetchResponse);
 };
 
 export const deleteCategory = (
   id: number,
-  options: DeleteOptions = { type: "all" }
+  options: DeleteOptions = { type: 'all' }
 ) => {
   return fetch(`${API_URL}/${id}`, {
-    method: "delete",
+    method: 'delete',
     body: JSON.stringify(options),
     headers: {
-      "content-type": "application/json",
+      'content-type': 'application/json',
     },
   }).then<void>(processFetchResponse);
 };

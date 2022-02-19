@@ -38,29 +38,43 @@ cartRouter
     try {
       const { productId, qty } =
         req.body as Prisma.CartItemUncheckedCreateInput;
+
+      const where: Prisma.CartItemWhereUniqueInput = {};
+      const create: Prisma.CartItemUncheckedCreateInput = {
+        productId,
+        qty,
+      };
+
       if (res.locals.user) {
-        const cart = await prisma.cartItem.findUnique({
-          where: {
-            productId_userId_sessionId: {
-              sessionId: req.session.id,
-              productId,
-              userId: null,
-            },
-          },
-        });
-        res.json({ cart });
-        return;
+        where.productId_userId = {
+          productId,
+          userId: res.locals.user.id,
+        };
+        create.userId = res.locals.user.id;
       } else {
-        const cart = await prisma.cartItem.create({
-          data: {
-            sessionId: req.session.id,
-            productId,
-            qty: Number(qty),
-          },
-        });
-        res.json({ cart });
-        return;
+        where.productId_sessionId = {
+          productId,
+          sessionId: req.session.id,
+        };
+        create.sessionId = req.session.id;
       }
+
+      const cartItem = await prisma.cartItem.findUnique({
+        where,
+      });
+
+      const result = await prisma.cartItem.upsert({
+        where: {
+          id: cartItem?.id || -1,
+        },
+        create,
+        update: {
+          qty: {
+            increment: qty,
+          },
+        },
+      });
+      return res.json(result);
     } catch (error) {
       next(error);
     }

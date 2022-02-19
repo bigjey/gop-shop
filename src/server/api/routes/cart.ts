@@ -27,7 +27,7 @@ cartRouter
             sessionId: req.session.id,
           },
         });
-        res.json({ cart });
+        res.json(cart);
         return;
       }
     } catch (error) {
@@ -82,32 +82,56 @@ cartRouter
   .put(async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { productId, qty } =
-        req.body as Prisma.CartItemUncheckedUpdateInput;
+        req.body as Prisma.CartItemUncheckedCreateInput;
+      const where: Prisma.CartItemWhereUniqueInput = {};
+
       if (res.locals.user) {
-        const cart = await prisma.cartItem.updateMany({
-          where: {
-            userId: res.locals.user.id,
-            productId: Number(productId),
-          },
-          data: {
-            qty,
-          },
-        });
-        res.json({ cart });
-        return;
+        where.productId_userId = {
+          productId,
+          userId: res.locals.user.id,
+        };
       } else {
-        const cart = await prisma.cartItem.updateMany({
-          where: {
-            sessionId: req.session.id,
-            productId: Number(productId),
-          },
-          data: {
-            qty,
-          },
-        });
-        res.json({ cart });
-        return;
+        where.productId_sessionId = {
+          productId,
+          sessionId: req.session.id,
+        };
       }
+
+      const cart = await prisma.cartItem.update({
+        where,
+        data: {
+          qty,
+        },
+      });
+      res.json(cart);
+      return;
+    } catch (error) {
+      next(error);
+    }
+  })
+  .delete(async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { productId } = req.body as Prisma.CartItemUncheckedCreateInput;
+      const where: Prisma.CartItemWhereUniqueInput = {};
+
+      if (res.locals.user) {
+        where.productId_userId = {
+          productId,
+          userId: res.locals.user.id,
+        };
+      } else {
+        where.productId_sessionId = {
+          productId,
+          sessionId: req.session.id,
+        };
+      }
+
+      const result = await prisma.cartItem.delete({
+        where,
+      });
+
+      res.json(result);
+      return;
     } catch (error) {
       next(error);
     }

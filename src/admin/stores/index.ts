@@ -1,4 +1,4 @@
-import { UserRole } from '~/node_modules/.prisma/client';
+import { UserRole } from '../../../node_modules/.prisma/client';
 import { makeAutoObservable } from 'mobx';
 import { createContext } from 'react';
 

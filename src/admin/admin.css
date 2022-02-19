@@ -6,7 +6,7 @@
 
 html,
 body {
-  font-family: "Montserrat", sans-serif;
+  font-family: 'Montserrat', sans-serif;
   font-size: 18px;
   font-weight: 500 !important;
   width: 100%;
@@ -21,9 +21,30 @@ h4,
 h5,
 h6 {
   font-weight: 800 !important;
-  font-family: "Montserrat", sans-serif;
+  font-family: 'Montserrat', sans-serif;
 }
 
 option.level-0 {
   font-weight: 700;
+}
+
+.form-screen {
+  width: 400px;
+  max-width: 100%;
+  margin: auto;
+  text-align: center;
+}
+
+.preloader {
+  margin: auto;
+  width: 100px !important;
+  height: 100px !important;
+  animation-duration: 2s !important;
+}
+
+.user-widget {
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+  padding: 0 15px;
 }

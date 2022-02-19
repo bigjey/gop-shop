@@ -123,7 +123,7 @@ authRouter
         // );
 
         // res.json({ token });
-        res.end();
+        res.json(null);
         return;
       } else {
         res.status(400).send('Wrong email or password');
@@ -159,7 +159,7 @@ authRouter
       });
 
       if (!user) {
-        res.status(400);
+        res.sendStatus(400);
         return;
       }
 
@@ -176,7 +176,8 @@ authRouter
         },
       });
       res.json({
-        link: `${process.env.BASE_URL}/api/auth/reset/${user.id}/${resetToken}`,
+        userId: user.id,
+        token: resetToken,
       });
       return;
     } catch (error) {
@@ -185,69 +186,27 @@ authRouter
   });
 
 authRouter
-  .route('/auth/resend')
+  .route('/auth/reset')
   .post(async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { email } = req.body as {
-        email: string;
-      };
-      const user = await prisma.user.findUnique({
-        where: { email },
-      });
+      const { password, repeatPassword, token, userId } = req.body;
 
-      if (!user) {
-        res.status(400);
+      if (!userId) {
+        return res.sendStatus(400);
+      }
+
+      if (!token || token.length < 2) {
+        res.status(400).send(`Invalid token`);
         return;
       }
 
-      await prisma.resetToken.deleteMany({ where: { userId: user.id } });
-
-      const resetToken = randomBytes(32).toString('hex');
-
-      const hash = await bcrypt.hash(resetToken, 10);
-
-      await prisma.resetToken.create({
-        data: {
-          userId: user.id,
-          token: hash,
-        },
-      });
-      res.json({
-        link: `${process.env.BASE_URL}/api/auth/reset/${user.id}/${resetToken}`,
-      });
-    } catch (error) {
-      next(error);
-    }
-  });
-
-authRouter
-  .param('id', (req, res, next, id) => {
-    if (Number.isNaN(Number(id)) || Number(id) < 1) {
-      res.status(400).send('id must be int');
-      return;
-    }
-    next();
-  })
-  .param('token', (req, res, next, token) => {
-    if (!token || token.length < 1) {
-      res.status(400).send('provide a token');
-      return;
-    }
-    next();
-  })
-  .route('/auth/reset/:id/:token')
-  .post(async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      const { id, token } = req.params;
-      const { password, repeatPassword } = req.body;
-
-      if (password !== repeatPassword) {
+      if (!password || !repeatPassword || password !== repeatPassword) {
         res.status(400).send(`Passwords don't match`);
         return;
       }
 
       const tokenFromDb = await prisma.resetToken.findFirst({
-        where: { userId: Number(id) },
+        where: { userId: userId },
       });
 
       if (!tokenFromDb) {
@@ -267,22 +226,21 @@ authRouter
         return;
       }
 
-      const tokensMatch = await bcrypt.compare(token, tokenFromDb.token);
+      const match = await bcrypt.compare(token, tokenFromDb.token);
 
-      if (!tokensMatch) {
-        res.status(400);
-        return;
+      if (!match) {
+        return res.sendStatus(400);
       }
 
       const newPassword = await bcrypt.hash(password, 10);
 
       const transactionResult = await prisma.$transaction([
         prisma.user.update({
-          where: { id: Number(id) },
+          where: { id: tokenFromDb.userId },
           data: { password: newPassword },
         }),
         prisma.resetToken.deleteMany({
-          where: { userId: Number(id) },
+          where: { userId: tokenFromDb.userId },
         }),
       ]);
 

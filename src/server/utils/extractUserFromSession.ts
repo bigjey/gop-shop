@@ -15,7 +15,7 @@ export const extractUserFromSession = async (
   try {
     if (
       !req.session.lastSignIn ||
-      Date.now() - req.session.lastSignIn > 2 * 60 * 1000
+      Date.now() - req.session.lastSignIn > 4 * 60 * 60 * 1000
     ) {
       return next();
     }

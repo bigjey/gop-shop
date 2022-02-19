@@ -9,11 +9,13 @@ import { productSpecPresetGroupItemRouter } from './routes/productSpecPresetGrou
 import { productSpecValueRouter } from './routes/productSpecValue';
 import { productGalleryRouter } from './routes/productGallery';
 import { authRouter } from './routes/auth';
+import { cartRouter } from './routes/cart';
 
 export const api = express.Router();
 
 api.use(authRouter);
 
+api.use(cartRouter);
 api.use(categoryRouter);
 api.use(productRouter);
 api.use(productReviewRouter);

@@ -138,3 +138,14 @@ model Session {
   data      String
   expiresAt DateTime
 }
+
+model CartItem {
+  id        Int     @id @default(autoincrement())
+  productId Int
+  qty       Int
+  userId    Int?
+  sessionId String?
+
+  @@unique([productId, userId], map: "productId_userId")
+  @@unique([productId, sessionId], map: "productId_sessionId")
+}

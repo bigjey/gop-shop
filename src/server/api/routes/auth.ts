@@ -115,6 +115,55 @@ authRouter
       if (match) {
         req.session.userId = user.id;
         req.session.lastSignIn = Date.now();
+
+        // handle cart items merge
+
+        const idsToKeep = await prisma
+          .$queryRawUnsafe<{ id: number }[]>(
+            `
+          select "id"
+          from "CartItem"
+          where ("productId", "updatedAt") in (
+            select "productId", max("updatedAt")
+            from "CartItem"
+            where "sessionId" = $1 or "userId" = $2
+            group by "productId"
+          )
+        `,
+            req.session.id,
+            user.id
+          )
+          .then((values) => values.map((el) => el.id));
+
+        await prisma.$transaction([
+          prisma.cartItem.deleteMany({
+            where: {
+              id: {
+                notIn: idsToKeep,
+              },
+              OR: [
+                {
+                  userId: user.id,
+                },
+                {
+                  sessionId: req.session.id,
+                },
+              ],
+            },
+          }),
+          prisma.cartItem.updateMany({
+            where: {
+              id: {
+                in: idsToKeep,
+              },
+            },
+            data: {
+              sessionId: null,
+              userId: user.id,
+            },
+          }),
+        ]);
+
         // const token = jwt.sign(
         //   payload,
         //   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion

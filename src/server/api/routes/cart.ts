@@ -72,6 +72,7 @@ cartRouter
           qty: {
             increment: qty,
           },
+          updatedAt: new Date(),
         },
       });
       return res.json(result);
@@ -101,6 +102,7 @@ cartRouter
         where,
         data: {
           qty,
+          updatedAt: new Date(),
         },
       });
       res.json(cart);

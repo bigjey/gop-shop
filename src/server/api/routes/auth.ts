@@ -135,6 +135,19 @@ authRouter
   });
 
 authRouter
+  .route('/auth/logout')
+  .post(async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      delete req.session.userId;
+      delete req.session.lastSignIn;
+      res.json();
+      return;
+    } catch (error) {
+      next(error);
+    }
+  });
+
+authRouter
   .route('/auth/verify')
   .post(authTokenValidator, (req: Request, res: Response) => {
     const payload: AuthTokenPayload = { id: res.locals.userId };

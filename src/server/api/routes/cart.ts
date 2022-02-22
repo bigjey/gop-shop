@@ -19,7 +19,7 @@ cartRouter
             userId: res.locals.user.id,
           },
         });
-        res.json({ cart });
+        res.json(cart);
         return;
       } else {
         const cart = await prisma.cartItem.findMany({
@@ -38,6 +38,8 @@ cartRouter
     try {
       const { productId, qty } =
         req.body as Prisma.CartItemUncheckedCreateInput;
+
+      console.log({ productId, qty });
 
       const where: Prisma.CartItemWhereUniqueInput = {};
       const create: Prisma.CartItemUncheckedCreateInput = {

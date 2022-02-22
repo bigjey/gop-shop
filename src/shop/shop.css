@@ -1,0 +1,40 @@
+.featured__add-to-cart {
+  display: flex;
+  width: 100%;
+  margin-top: 15px;
+}
+
+.featured__add-to-cart input {
+  width: 60px;
+  flex-shrink: 0;
+  display: block;
+  text-align: center;
+  font-size: 20px;
+}
+
+.featured__add-to-cart button {
+  flex-grow: 1;
+  display: block;
+  font-size: 16px;
+  font-weight: normal;
+  padding: 5px;
+}
+
+.featured__add-to-cart i {
+  margin-right: 10px;
+}
+
+body .header__cart ul li a span {
+  width: auto;
+  height: auto;
+  right: auto;
+  left: 100%;
+  border-radius: 5px;
+  padding: 2px 5px;
+  font-size: 14px;
+  font-weight: normal;
+}
+
+body .header__cart ul li a i {
+  font-size: 20px;
+}

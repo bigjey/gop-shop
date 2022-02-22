@@ -39,10 +39,7 @@ productGalleryRouter
           )) as cloudinary.UploadApiResponse;
 
           uploaded.push({
-            publicId: result.public_id.substring(
-              0,
-              result.public_id.lastIndexOf('.')
-            ),
+            publicId: result.public_id,
             productId,
             sortOrder,
           });

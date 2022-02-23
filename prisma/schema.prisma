@@ -39,7 +39,7 @@ model Product {
   images       ProductImage[]
   reviews      ProductReview[]
   specValues   SpecValue[]
-  specPresets  SpecPreset[]    @relation(fields: [specPresetId], references: [id])
+  specPresets  SpecPreset[]
   cartItems    CartItem[]
   rating       Float?          @default(0.0)
 }

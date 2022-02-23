@@ -28,22 +28,29 @@ productGalleryRouter
       Array.isArray(req.files?.images) ? req.files?.images : [req.files?.images]
     ) as fileUpload.UploadedFile[];
     const productId = Number(req.params.id);
-    if (files && files[0] !== undefined) {
+    if (files.length) {
       try {
         const uploaded = [] as Prisma.ProductImageUncheckedCreateInput[];
-        let sortOrder = 1;
+
+        const maxOrder = await prisma.productImage.aggregate({
+          _max: {
+            sortOrder: true,
+          },
+          where: {
+            productId,
+          },
+        });
+
+        let sortOrder = maxOrder._max.sortOrder ?? 0;
 
         for (const file of files) {
-          const result: cloudinary.UploadApiResponse = (await upload(
-            file
-          )) as cloudinary.UploadApiResponse;
+          const result = await upload(file);
 
           uploaded.push({
             publicId: result.public_id,
             productId,
-            sortOrder,
+            sortOrder: ++sortOrder,
           });
-          sortOrder++;
         }
 
         const dbResponse = await prisma.productImage.createMany({

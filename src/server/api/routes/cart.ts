@@ -23,6 +23,9 @@ cartRouter
 
       const cart: CartItemWithIncludes[] = await prisma.cartItem.findMany({
         where,
+        orderBy: {
+          productId: 'asc',
+        },
         include: {
           product: {
             include: {

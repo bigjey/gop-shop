@@ -46,6 +46,16 @@ export class ShopAppState {
 
     return count;
   }
+
+  get cartTotal() {
+    let total = 0;
+
+    for (const item of this.cart) {
+      total += item.qty * item.product.price;
+    }
+
+    return total;
+  }
 }
 
 export const ShopAppStateContext = createContext<ShopAppState>(

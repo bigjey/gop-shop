@@ -25,7 +25,7 @@ export const CartScreen: React.FC = observer(() => {
           </div>
           {state.cartCount > 0 && (
             <div className="row">
-              <div className="col-lg-12">
+              <div className="col-lg-12" style={{ display: 'none' }}>
                 <div className="shoping__cart__btns">
                   <a href="#" className="primary-btn cart-btn">
                     CONTINUE SHOPPING
@@ -38,7 +38,10 @@ export const CartScreen: React.FC = observer(() => {
               </div>
               <div className="col-lg-6">
                 <div className="shoping__continue">
-                  <div className="shoping__discount">
+                  <div
+                    className="shoping__discount"
+                    style={{ display: 'none' }}
+                  >
                     <h5>Discount Codes</h5>
                     <form action="#">
                       <input type="text" placeholder="Enter your coupon code" />
@@ -53,11 +56,11 @@ export const CartScreen: React.FC = observer(() => {
                 <div className="shoping__checkout">
                   <h5>Cart Total</h5>
                   <ul>
-                    <li>
+                    <li style={{ display: 'none' }}>
                       Subtotal <span>$454.98</span>
                     </li>
                     <li>
-                      Total <span>$454.98</span>
+                      Total <span>${state.cartTotal}</span>
                     </li>
                   </ul>
                   <a href="#" className="primary-btn">

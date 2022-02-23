@@ -38,3 +38,45 @@ body .header__cart ul li a span {
 body .header__cart ul li a i {
   font-size: 20px;
 }
+
+.shoping__cart__quantity .pro-qty {
+  display: flex;
+  margin: auto;
+  width: 170px !important;
+  height: 50px !important;
+}
+
+.shoping__cart__quantity .pro-qty input {
+  font-size: 20px;
+  width: 70px;
+}
+.shoping__cart__quantity .pro-qty button {
+  flex-grow: 1;
+}
+.shoping__cart__quantity .pro-qty button[disabled] {
+  background: #ccc;
+}
+
+@keyframes rotating {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.icon_loading {
+  display: block;
+  animation: rotating 2s linear infinite;
+}
+
+.shoping__cart__quantity .pro-qty {
+  /* animation: rotating 2s linear infinite; */
+}
+
+.shoping__cart__row {
+}
+.shoping__cart__row.deleting {
+  opacity: 0.6;
+}

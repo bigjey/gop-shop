@@ -1,6 +1,9 @@
 import express, { Request, Response, NextFunction } from 'express';
 import { Prisma, PrismaClient } from '@prisma/client';
+import joi from 'joi';
+
 import { CartItemWithIncludes } from '../../../shared/types';
+import { validateRequest } from '../../utils/validateRequest';
 
 const prisma = new PrismaClient({
   // rejectOnNotFound: true,
@@ -87,37 +90,47 @@ cartRouter
       next(error);
     }
   })
-  .put(async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      const { productId, qty } =
-        req.body as Prisma.CartItemUncheckedCreateInput;
-      const where: Prisma.CartItemWhereUniqueInput = {};
+  .put(
+    validateRequest({
+      body: joi
+        .object({
+          productId: joi.number().integer().min(1).required(),
+          qty: joi.number().integer().min(1).required(),
+        })
+        .required(),
+    }),
+    async (req: Request, res: Response, next: NextFunction) => {
+      try {
+        const { productId, qty } =
+          req.body as Prisma.CartItemUncheckedCreateInput;
+        const where: Prisma.CartItemWhereUniqueInput = {};
 
-      if (res.locals.user) {
-        where.productId_userId = {
-          productId,
-          userId: res.locals.user.id,
-        };
-      } else {
-        where.productId_sessionId = {
-          productId,
-          sessionId: req.session.id,
-        };
+        if (res.locals.user) {
+          where.productId_userId = {
+            productId,
+            userId: res.locals.user.id,
+          };
+        } else {
+          where.productId_sessionId = {
+            productId,
+            sessionId: req.session.id,
+          };
+        }
+
+        const cart = await prisma.cartItem.update({
+          where,
+          data: {
+            qty,
+            updatedAt: new Date(),
+          },
+        });
+        res.json(cart);
+        return;
+      } catch (error) {
+        next(error);
       }
-
-      const cart = await prisma.cartItem.update({
-        where,
-        data: {
-          qty,
-          updatedAt: new Date(),
-        },
-      });
-      res.json(cart);
-      return;
-    } catch (error) {
-      next(error);
     }
-  })
+  )
   .delete(async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { productId } = req.body as Prisma.CartItemUncheckedCreateInput;

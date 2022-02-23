@@ -1,14 +1,9 @@
 import express, { Request, Response, NextFunction } from 'express';
-import { Prisma, PrismaClient } from '@prisma/client';
+import { Prisma } from '@prisma/client';
 import cloudinary from 'cloudinary';
 import fileUpload from 'express-fileupload';
 import { upload } from '../../utils/imageUploader';
-
-const prisma = new PrismaClient({
-  // rejectOnNotFound: true,
-  errorFormat: 'pretty',
-  log: ['query', 'info', 'warn', 'error'],
-});
+import { prisma } from '../../client';
 
 cloudinary.v2.config();
 

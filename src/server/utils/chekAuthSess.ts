@@ -1,11 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
-import { PrismaClient } from '@prisma/client';
-
-const prisma = new PrismaClient({
-  // rejectOnNotFound: true,
-  errorFormat: 'pretty',
-  log: ['query', 'info', 'warn', 'error'],
-});
+import { prisma } from '../client';
 
 export default async (req: Request, res: Response, next: NextFunction) => {
   try {

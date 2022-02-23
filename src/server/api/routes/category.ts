@@ -1,12 +1,6 @@
 import express, { Request, Response, NextFunction } from 'express';
-import { PrismaClient } from '@prisma/client';
 import { categoriesListToTree } from '../../utils/treeBuilder';
-
-const prisma = new PrismaClient({
-  rejectOnNotFound: true,
-  errorFormat: 'pretty',
-  log: ['query', 'info', 'warn', 'error'],
-});
+import { prisma } from '../../client';
 
 export const categoryRouter = express.Router();
 

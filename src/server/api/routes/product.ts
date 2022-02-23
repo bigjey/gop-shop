@@ -1,5 +1,5 @@
 import express, { Request, Response, NextFunction } from 'express';
-import { Prisma, PrismaClient, Product, UserRole } from '@prisma/client';
+import { Prisma, Product, UserRole } from '@prisma/client';
 
 import {
   AdminProductsFilter,
@@ -8,12 +8,7 @@ import {
   ProductGetRelatedDataOptions,
 } from '../../../shared/types';
 import { checkUserRole } from '../../utils/checkUserRole';
-
-const prisma = new PrismaClient({
-  // rejectOnNotFound: true,
-  errorFormat: 'pretty',
-  log: ['query', 'info', 'warn', 'error'],
-});
+import { prisma } from '../../client';
 
 export const productRouter = express.Router();
 

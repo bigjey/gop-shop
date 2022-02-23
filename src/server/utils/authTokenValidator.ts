@@ -1,13 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
-import { PrismaClient } from '@prisma/client';
 import jwt from 'jsonwebtoken';
 import { AuthTokenPayload } from '../../shared/types';
-
-const prisma = new PrismaClient({
-  // rejectOnNotFound: true,
-  errorFormat: 'pretty',
-  log: ['query', 'info', 'warn', 'error'],
-});
+import { prisma } from '../client';
 
 export default async (req: Request, res: Response, next: NextFunction) => {
   const token = req.body.token || req.query.token || req.headers.token;

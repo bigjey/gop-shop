@@ -1,11 +1,6 @@
 import express, { Request, Response, NextFunction } from 'express';
-import { Prisma, PrismaClient } from '@prisma/client';
-
-const prisma = new PrismaClient({
-  // rejectOnNotFound: true,
-  errorFormat: 'pretty',
-  log: ['query', 'info', 'warn', 'error'],
-});
+import { Prisma } from '@prisma/client';
+import { prisma } from '../../client';
 
 export const productSpecRouter = express.Router();
 

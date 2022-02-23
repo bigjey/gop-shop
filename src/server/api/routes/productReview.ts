@@ -1,16 +1,11 @@
 import express, { Request, Response, NextFunction } from 'express';
-import { Prisma, PrismaClient, ProductReview } from '@prisma/client';
+import { Prisma, ProductReview } from '@prisma/client';
 import {
   AdminProductReviewsFilter,
   PaginationOptions,
   SortOptions,
 } from '../../../shared/types';
-
-const prisma = new PrismaClient({
-  // rejectOnNotFound: true,
-  errorFormat: 'pretty',
-  log: ['query', 'info', 'warn', 'error'],
-});
+import { prisma } from '../../client';
 
 export const productReviewRouter = express.Router();
 

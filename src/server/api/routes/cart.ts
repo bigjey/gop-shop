@@ -1,15 +1,10 @@
 import express, { Request, Response, NextFunction } from 'express';
-import { Prisma, PrismaClient } from '@prisma/client';
+import { Prisma } from '@prisma/client';
 import joi from 'joi';
 
 import { CartItemWithIncludes } from '../../../shared/types';
 import { validateRequest } from '../../utils/validateRequest';
-
-const prisma = new PrismaClient({
-  // rejectOnNotFound: true,
-  errorFormat: 'pretty',
-  log: ['query', 'info', 'warn', 'error'],
-});
+import { prisma } from '../../client';
 
 export const cartRouter = express.Router();
 

@@ -1,7 +1,8 @@
-import { CartItem } from '@prisma/client';
+import { CartItem, Product } from '@prisma/client';
 import { observer } from 'mobx-react-lite';
 import React from 'react';
 import { Outlet } from 'react-router';
+import { Link } from 'react-router-dom';
 import { UserAuth } from '../../../shared/types';
 import { ShopAppStateContext } from '../../stores';
 import { CartCount } from '../CartCount';
@@ -10,7 +11,11 @@ const fetchAuth = (): Promise<UserAuth> => {
   return fetch('/api/auth').then((r) => r.json());
 };
 
-const fetchCart = (): Promise<CartItem[]> => {
+const fetchCart = (): Promise<
+  (CartItem & {
+    product: Product;
+  })[]
+> => {
   return fetch('/api/cart').then((r) => r.json());
 };
 
@@ -189,9 +194,9 @@ export const ShopApp: React.FC = observer(() => {
           <div className="row">
             <div className="col-lg-3">
               <div className="header__logo">
-                <a href="./index.html">
+                <Link to="/">
                   <img src="img/logo.png" alt="" />
-                </a>
+                </Link>
               </div>
             </div>
             <div className="col-lg-6">
@@ -238,9 +243,9 @@ export const ShopApp: React.FC = observer(() => {
                     </a>
                   </li>
                   <li>
-                    <a href="#">
+                    <Link to="/cart">
                       <i className="fa fa-shopping-bag"></i> <CartCount />
-                    </a>
+                    </Link>
                   </li>
                 </ul>
                 <div

@@ -1,5 +1,8 @@
 import {
+  CartItem,
   Category,
+  Product,
+  ProductImage,
   Spec,
   SpecPreset,
   SpecPresetGroup,
@@ -12,6 +15,10 @@ export type DeleteOptions =
   | { type: 'move'; newParentId: number | null };
 
 export type CategoryWithChildren = Category & { children?: Category[] };
+
+export type CartItemWithIncludes = CartItem & {
+  product: Product & { images: ProductImage[] };
+};
 
 export type SpecPresetWithIncludes = SpecPreset & {
   presetGroups?: (SpecPresetGroup & {

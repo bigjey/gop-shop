@@ -1,9 +1,9 @@
-import { CartItem, Product, ProductImage } from '@prisma/client';
+import { Product, ProductImage } from '@prisma/client';
 import React from 'react';
-import { AdvancedImage } from '@cloudinary/react';
-import { CloudinaryImage } from '@cloudinary/url-gen';
 
 import { ShopAppStateContext } from '../../stores';
+import { imageUrl } from '../../../shared/utils';
+import { CartItemWithIncludes } from '../../../shared/types';
 
 const addToCart = (productId: number, qty: number) => {
   return fetch('/api/cart', {
@@ -13,7 +13,7 @@ const addToCart = (productId: number, qty: number) => {
   });
 };
 
-const fetchCart = (): Promise<CartItem[]> => {
+const fetchCart = (): Promise<CartItemWithIncludes[]> => {
   return fetch('/api/cart').then((r) => r.json());
 };
 
@@ -29,9 +29,11 @@ export const ProductPreviewCard: React.FC<{
   const onAddToCartClick = async () => {
     setLoading(true);
     try {
-      await addToCart(product.id, qty);
-      const cart = await fetchCart();
-      state.setCart(cart);
+      if (qty > 0) {
+        await addToCart(product.id, qty);
+        const cart = await fetchCart();
+        state.setCart(cart);
+      }
     } catch (err) {
       console.log(err);
     }
@@ -47,9 +49,9 @@ export const ProductPreviewCard: React.FC<{
             style={{
               backgroundImage:
                 product.images && product.images.length > 0
-                  ? `url(${new CloudinaryImage(product.images[0].publicId, {
-                      cloudName: 'hewlpuky3',
-                    }).toURL()})`
+                  ? `url(${imageUrl(product.images[0].publicId, {
+                      resize: { width: 300, height: 300 },
+                    })})`
                   : undefined,
             }}
           ></div>
@@ -65,6 +67,7 @@ export const ProductPreviewCard: React.FC<{
                 name=""
                 id=""
                 value={qty}
+                min="1"
                 onChange={(e) => setQty(Number(e.target.value))}
               />
               <button

@@ -7,6 +7,7 @@ import './shop.css';
 import { ShopAppState, ShopAppStateContext } from './stores';
 import { ShopApp } from './components/ShopApp';
 import { CatalogueScreen } from './screens/CatalogueScreen';
+import { CartScreen } from './screens/CartScreen';
 
 const mountNode = document.getElementById('app');
 
@@ -31,6 +32,7 @@ render(
         <Routes>
           <Route path="/" element={<ShopApp />}>
             <Route path="/" element={<CatalogueScreen />} />
+            <Route path="/cart" element={<CartScreen />} />
             <Route path="*" element={<>404</>} />
           </Route>
         </Routes>

@@ -40,6 +40,7 @@ model Product {
   reviews      ProductReview[]
   specValues   SpecValue[]
   specPresets  SpecPreset[]    @relation(fields: [specPresetId], references: [id])
+  cartItems    CartItem[]
   rating       Float?          @default(0.0)
 }
 
@@ -146,6 +147,7 @@ model CartItem {
   userId    Int?
   sessionId String?
   updatedAt DateTime @default(now()) @db.Timestamp(6)
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
   @@unique([productId, userId], map: "productId_userId")
   @@unique([productId, sessionId], map: "productId_sessionId")

@@ -1,13 +1,17 @@
-import { CartItem, UserRole } from '../../../node_modules/.prisma/client';
+import {
+  CartItem,
+  UserRole,
+  Product,
+} from '../../../node_modules/.prisma/client';
 import { makeAutoObservable } from 'mobx';
 import { createContext } from 'react';
 
-import { UserAuth } from '../../shared/types';
+import { CartItemWithIncludes, UserAuth } from '../../shared/types';
 
 export class ShopAppState {
   auth?: UserAuth | null = null;
 
-  cart: CartItem[] = [];
+  cart: CartItemWithIncludes[] = [];
 
   constructor() {
     makeAutoObservable(this);
@@ -29,7 +33,7 @@ export class ShopAppState {
     return this.auth?.role === UserRole.SuperAdmin;
   }
 
-  setCart(cart: CartItem[]) {
+  setCart(cart: CartItemWithIncludes[]) {
     this.cart = cart;
   }
 

@@ -26,8 +26,11 @@ export const CatalogueScreen: React.FC = () => {
 
   return (
     <>
-      <section className="product spad">
+      <section className=" ">
         <div className="container">
+          <div className="section-title from-blog__title">
+            <h2>Shop</h2>
+          </div>
           <div className="row">
             <div className="col-lg-3 col-md-5">
               <div className="sidebar">
@@ -300,7 +303,7 @@ export const CatalogueScreen: React.FC = () => {
                   <ProductPreviewCard key={p.id} product={p} />
                 ))}
               </div>
-              <div className="product__pagination">
+              <div className="product__pagination" style={{ display: 'none' }}>
                 <a href="#">1</a>
                 <a href="#">2</a>
                 <a href="#">3</a>

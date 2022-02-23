@@ -1,5 +1,6 @@
 import express, { Request, Response, NextFunction } from 'express';
 import { Prisma, PrismaClient } from '@prisma/client';
+import { CartItemWithIncludes } from '../../../shared/types';
 
 const prisma = new PrismaClient({
   // rejectOnNotFound: true,
@@ -13,23 +14,24 @@ cartRouter
   .route('/cart')
   .get(async (req: Request, res: Response, next: NextFunction) => {
     try {
+      const where: Prisma.CartItemWhereInput = {};
       if (res.locals.user) {
-        const cart = await prisma.cartItem.findMany({
-          where: {
-            userId: res.locals.user.id,
-          },
-        });
-        res.json(cart);
-        return;
+        where.userId = res.locals.user.id;
       } else {
-        const cart = await prisma.cartItem.findMany({
-          where: {
-            sessionId: req.session.id,
-          },
-        });
-        res.json(cart);
-        return;
+        where.sessionId = req.session.id;
       }
+
+      const cart: CartItemWithIncludes[] = await prisma.cartItem.findMany({
+        where,
+        include: {
+          product: {
+            include: {
+              images: true,
+            },
+          },
+        },
+      });
+      return res.json(cart);
     } catch (error) {
       next(error);
     }

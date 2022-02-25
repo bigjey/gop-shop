@@ -9,6 +9,8 @@ import {
 } from '../../../shared/types';
 import { checkUserRole } from '../../utils/checkUserRole';
 import { prisma } from '../../client';
+import { validateRequest } from '../../utils/validateRequest';
+import joi from 'joi';
 
 export const productRouter = express.Router();
 
@@ -190,44 +192,71 @@ productRouter
     next();
   })
   .route('/products/:id')
-  .get(async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      const id = Number(req.params.id);
-      const query = req.query as ProductGetRelatedDataOptions;
-      //GETTING RELATED DATA
-      const { getReviews = 'false', getImages = 'false' } = query;
-      const includeSettings: Prisma.ProductInclude = {};
+  .get(
+    validateRequest({
+      query: joi.object({
+        includeReviews: joi.valid('1', 'true'),
+        includeImages: joi.valid('1', 'true'),
+        includeSpecs: joi.valid('1', 'true'),
+      }),
+    }),
+    async (req: Request, res: Response, next: NextFunction) => {
+      try {
+        const id = Number(req.params.id);
+        const query = req.query as {
+          includeReviews?: '1' | 'true';
+          includeImages?: '1' | 'true';
+          includeSpecs?: '1' | 'true';
+        };
 
-      if (getReviews === 'true') {
-        includeSettings.reviews = true;
-      } else if (getReviews === 'false') {
-        includeSettings.reviews = false;
-      }
+        const { includeReviews, includeImages, includeSpecs } = query;
 
-      if (getImages === 'true') {
-        includeSettings.images = true;
-      } else if (getImages === 'false') {
-        includeSettings.images = false;
-      }
+        const include: Prisma.ProductInclude = {};
 
-      const product = await prisma.product.findUnique({
-        where: {
-          id,
-        },
-        include: { images: { orderBy: { sortOrder: 'asc' } } },
-      });
+        if (includeReviews) {
+          include.reviews = { orderBy: { createdAt: 'desc' } };
+        }
 
-      if (!product) {
-        res.status(404).send('Product not found');
+        if (includeImages) {
+          include.images = { orderBy: { sortOrder: 'asc' } };
+        }
+
+        if (includeSpecs) {
+          include.specPreset = {
+            include: {
+              presetGroups: {
+                include: {
+                  presetGroupItems: {
+                    include: {
+                      spec: true,
+                    },
+                  },
+                },
+              },
+            },
+          };
+          include.specValues = true;
+        }
+
+        const product = await prisma.product.findUnique({
+          where: {
+            id,
+          },
+          include: Object.keys(include).length ? include : undefined,
+        });
+
+        if (!product) {
+          res.status(404).send('Product not found');
+          return;
+        }
+
+        res.json(product);
         return;
+      } catch (error) {
+        next(error);
       }
-
-      res.json(product);
-      return;
-    } catch (error) {
-      next(error);
     }
-  })
+  )
   .put(async (req: Request, res: Response, next: NextFunction) => {
     try {
       const id = Number(req.params.id);

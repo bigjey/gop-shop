@@ -34,12 +34,12 @@ model Product {
   isFeatured   Boolean         @default(false)
   saleValue    Int?
   categoryId   Int?
-  specPresetId Int?
+  specPresetId Int
   category     Category?       @relation(fields: [categoryId], references: [id])
   images       ProductImage[]
   reviews      ProductReview[]
   specValues   SpecValue[]
-  specPresets  SpecPreset[]
+  specPreset   SpecPreset      @relation(fields: [specPresetId], references: [id])
   cartItems    CartItem[]
   rating       Float?          @default(0.0)
 }

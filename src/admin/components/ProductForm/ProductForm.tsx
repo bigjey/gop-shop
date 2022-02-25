@@ -1,38 +1,44 @@
-import { Category, Prisma } from '@prisma/client';
+import { Category, Prisma, SpecPreset } from '@prisma/client';
 import React from 'react';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { Col, Form, Row, InputGroup, Button } from 'react-bootstrap';
 import { CategoriesOptions } from '../CategoryOptions';
 import { getCategoriesTree } from '../../api/categories';
+import { ProductWithIncludes } from '../../../shared/types';
+import { getSpecPresets } from '../../api/specPresets';
 
 type ProductFormProps = {
-  data: Partial<Prisma.ProductUncheckedCreateInput>;
+  data: Partial<ProductWithIncludes>;
   onSubmit(values: Prisma.ProductUncheckedCreateInput): unknown;
 };
 
 export const ProductForm: React.FC<ProductFormProps> = (props) => {
   const { data, onSubmit } = props;
   const [categories, setCategories] = React.useState<Category[]>([]);
+  const [specPresets, setSpecPresets] = React.useState<SpecPreset[]>([]);
 
   React.useEffect(() => {
     getCategoriesTree().then((data) => {
       setCategories(data);
+    });
+    getSpecPresets().then((data) => {
+      setSpecPresets(data);
     });
   }, []);
 
   const formik = useFormik<Prisma.ProductUncheckedCreateInput>({
     enableReinitialize: true,
     initialValues: {
-      name: '',
-      price: 0,
-      categoryId: undefined,
-      description: '',
-      isAvailable: true,
-      isActive: true,
-      isFeatured: false,
-      ...data,
-      saleValue: data.saleValue ? data.saleValue : 0,
+      name: data.name ?? '',
+      price: data.price ?? 0,
+      categoryId: data.categoryId ?? undefined,
+      description: data.description ?? '',
+      isAvailable: data.isAvailable ?? true,
+      isActive: data.isActive ?? true,
+      isFeatured: data.isFeatured ?? false,
+      saleValue: data.saleValue ?? 0,
+      specPresetId: data.specPresetId ?? 0,
     },
     validationSchema: Yup.object({
       name: Yup.string().required(),
@@ -42,6 +48,7 @@ export const ProductForm: React.FC<ProductFormProps> = (props) => {
     onSubmit: async (values) => {
       values.price = Number(values.price);
       values.saleValue = Number(values.saleValue);
+      values.specPresetId = Number(values.specPresetId);
 
       if (values.categoryId) {
         values.categoryId = Number(values.categoryId);
@@ -53,6 +60,10 @@ export const ProductForm: React.FC<ProductFormProps> = (props) => {
       console.log(result);
     },
   });
+
+  if (formik.values.specPresetId === 0 && specPresets.length) {
+    formik.values.specPresetId = specPresets[0].id;
+  }
 
   return (
     <>
@@ -162,6 +173,26 @@ export const ProductForm: React.FC<ProductFormProps> = (props) => {
             >
               <option value={''}>No category</option>
               <CategoriesOptions items={categories} />
+            </Form.Select>
+          </Col>
+        </Form.Group>
+        <Form.Group as={Row} className="mb-3">
+          <Form.Label column sm={2} htmlFor="specPresetId">
+            Spec Preset
+          </Form.Label>
+          <Col sm={10}>
+            <Form.Select
+              aria-label="Select Category"
+              id="specPresetId"
+              name="specPresetId"
+              onChange={formik.handleChange}
+              value={(formik.values.specPresetId || specPresets[0]?.id) ?? 0}
+            >
+              {specPresets.map((preset) => (
+                <option key={preset.id} value={preset.id}>
+                  {preset.name}
+                </option>
+              ))}
             </Form.Select>
           </Col>
         </Form.Group>

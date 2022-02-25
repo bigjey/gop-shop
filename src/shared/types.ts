@@ -3,10 +3,12 @@ import {
   Category,
   Product,
   ProductImage,
+  ProductReview,
   Spec,
   SpecPreset,
   SpecPresetGroup,
   SpecPresetGroupItem,
+  SpecValue,
   UserRole,
 } from '@prisma/client';
 
@@ -18,6 +20,13 @@ export type CategoryWithChildren = Category & { children?: Category[] };
 
 export type CartItemWithIncludes = CartItem & {
   product: Product & { images: ProductImage[] };
+};
+
+export type ProductWithIncludes = Product & {
+  images?: ProductImage[];
+  reviews?: ProductReview[];
+  specPreset?: SpecPresetWithIncludes;
+  specValues?: SpecValue[];
 };
 
 export type SpecPresetWithIncludes = SpecPreset & {

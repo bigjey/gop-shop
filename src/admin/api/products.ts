@@ -1,4 +1,5 @@
 import { Prisma, Product } from '@prisma/client';
+import { ProductWithIncludes } from '../../shared/types';
 import { processFetchResponse } from '../../shared/utils';
 
 const API_URL = `/api/products`;
@@ -36,8 +37,13 @@ export const updateProduct = (
   }).then<Product>(processFetchResponse);
 };
 
-export const getProduct = (id: number): Promise<Product> => {
-  return fetch(`${API_URL}/${id}`).then<Product>(processFetchResponse);
+export const getProduct = (
+  id: number,
+  query: URLSearchParams = new URLSearchParams()
+): Promise<ProductWithIncludes> => {
+  return fetch(`${API_URL}/${id}?${query.toString()}`).then(
+    processFetchResponse
+  );
 };
 
 export const deleteProduct = (id: number): Promise<Product> => {

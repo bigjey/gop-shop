@@ -137,6 +137,8 @@ model UserAddress {
   street      String
   houseNumber String
   city        String
+
+  @@unique([id, userId], map: "id_userId")
 }
 
 model ResetToken {

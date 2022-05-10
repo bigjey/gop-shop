@@ -10,6 +10,7 @@ import { productSpecValueRouter } from './routes/productSpecValue';
 import { productGalleryRouter } from './routes/productGallery';
 import { authRouter } from './routes/auth';
 import { cartRouter } from './routes/cart';
+import { accountRouter } from './routes/account';
 
 export const api = express.Router();
 
@@ -25,3 +26,5 @@ api.use(productSpecPresetGroupRouter);
 api.use(productSpecPresetGroupItemRouter);
 api.use(productSpecValueRouter);
 api.use(productGalleryRouter);
+
+api.use(accountRouter);

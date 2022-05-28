@@ -41,6 +41,7 @@ model Product {
   specValues   SpecValue[]
   specPreset   SpecPreset      @relation(fields: [specPresetId], references: [id])
   cartItems    CartItem[]
+  orderItems   OrderItem[]
   rating       Float?          @default(0.0)
 }
 
@@ -119,17 +120,18 @@ enum UserRole {
 }
 
 model User {
-  id       Int           @id @default(autoincrement())
-  name     String?
-  email    String        @unique
-  password String
-  role     UserRole
-  address  UserAddress[]
+  id        Int           @id @default(autoincrement())
+  name      String?
+  email     String        @unique
+  password  String
+  role      UserRole
+  addresses UserAddress[]
+  orders    Order[]
 }
 
 model UserAddress {
-  id          Int    @id @default(autoincrement())
-  user        User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  id          Int     @id @default(autoincrement())
+  user        User    @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   userId      Int
   firstName   String
   lastName    String
@@ -137,6 +139,7 @@ model UserAddress {
   street      String
   houseNumber String
   city        String
+  orders      Order[]
 
   @@unique([id, userId], map: "id_userId")
 }
@@ -166,4 +169,42 @@ model CartItem {
 
   @@unique([productId, userId], map: "productId_userId")
   @@unique([productId, sessionId], map: "productId_sessionId")
+}
+
+enum OrderPaymentType {
+  Cash
+  Card
+  Crypto
+}
+
+enum OrderStatus {
+  pending
+  accepted
+  cancelled
+  completed
+}
+
+model Order {
+  id                Int              @id @default(autoincrement())
+  createdAt         DateTime         @default(now()) @db.Timestamp(6)
+  deliveryAddressId Int
+  deliveryAddress   UserAddress      @relation(fields: [deliveryAddressId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  phoneNumber       String
+  email             String
+  userId            Int
+  user              User             @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  paymentType       OrderPaymentType @default(Card)
+  orderStatus       OrderStatus      @default(pending)
+  orderItems        OrderItem[]
+}
+
+model OrderItem {
+  id          Int     @id @default(autoincrement())
+  productId   Int
+  product     Product @relation(fields: [productId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  productName String
+  qty         Int
+  price       Float
+  orderId     Int
+  order       Order   @relation(fields: [orderId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 }

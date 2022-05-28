@@ -11,6 +11,7 @@ import { productGalleryRouter } from './routes/productGallery';
 import { authRouter } from './routes/auth';
 import { cartRouter } from './routes/cart';
 import { accountRouter } from './routes/account';
+import { orderRouter } from './routes/order';
 
 export const api = express.Router();
 
@@ -28,3 +29,4 @@ api.use(productSpecValueRouter);
 api.use(productGalleryRouter);
 
 api.use(accountRouter);
+api.use(orderRouter);

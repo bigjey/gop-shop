@@ -25,24 +25,43 @@ model Category {
 }
 
 model Product {
-  id           Int             @id @default(autoincrement())
-  name         String
-  price        Float           @default(0.0)
-  description  String?
-  isAvailable  Boolean         @default(true)
-  isActive     Boolean         @default(true)
-  isFeatured   Boolean         @default(false)
-  saleValue    Int?
-  categoryId   Int?
-  specPresetId Int
-  category     Category?       @relation(fields: [categoryId], references: [id])
-  images       ProductImage[]
-  reviews      ProductReview[]
-  specValues   SpecValue[]
-  specPreset   SpecPreset      @relation(fields: [specPresetId], references: [id])
-  cartItems    CartItem[]
-  orderItems   OrderItem[]
-  rating       Float?          @default(0.0)
+  id             Int             @id @default(autoincrement())
+  name           String
+  price          Float           @default(0.0)
+  description    String?
+  isAvailable    Boolean         @default(true)
+  isActive       Boolean         @default(true)
+  isFeatured     Boolean         @default(false)
+  saleValue      Int?
+  categoryId     Int?
+  specPresetId   Int
+  productGroupId Int?
+  category       Category?       @relation(fields: [categoryId], references: [id])
+  images         ProductImage[]
+  reviews        ProductReview[]
+  specValues     SpecValue[]
+  specPreset     SpecPreset      @relation(fields: [specPresetId], references: [id])
+  cartItems      CartItem[]
+  orderItems     OrderItem[]
+  productGroup   ProductGroup?   @relation(fields: [productGroupId], references: [id], onDelete: SetNull)
+  rating         Float?          @default(0.0)
+}
+
+model ProductGroup {
+  id       Int                @id @default(autoincrement())
+  name     String             @unique
+  products Product[]
+  specs    ProductGroupSpec[]
+}
+
+model ProductGroupSpec {
+  productGroupId Int
+  specId         Int
+
+  productGroup ProductGroup @relation(fields: [productGroupId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  spec         Spec         @relation(fields: [specId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@id([productGroupId, specId])
 }
 
 enum ReviewStatus {
@@ -63,9 +82,10 @@ model ProductReview {
 }
 
 model Spec {
-  id     Int                   @id @default(autoincrement())
-  name   String                @unique()
-  values SpecPresetGroupItem[]
+  id                Int                   @id @default(autoincrement())
+  name              String                @unique()
+  values            SpecPresetGroupItem[]
+  ProductGroupSpecs ProductGroupSpec[]
 }
 
 model SpecPreset {

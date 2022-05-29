@@ -228,14 +228,23 @@ productRouter
                 include: {
                   presetGroupItems: {
                     include: {
-                      spec: true,
+                      spec: {
+                        select: {
+                          name: true,
+                        },
+                      },
                     },
                   },
                 },
               },
             },
           };
-          include.specValues = true;
+          include.specValues = {
+            select: {
+              specPresetGroupItemId: true,
+              value: true,
+            },
+          };
         }
 
         const product = await prisma.product.findUnique({
@@ -250,7 +259,32 @@ productRouter
           return;
         }
 
-        res.json(product);
+        const variationsList = (await prisma.$queryRaw`
+          SELECT DISTINCT pp.id, pp.name, s.name, sv.value
+          FROM "Product" p
+          JOIN "Product" pp ON pp."productGroupId" = p."productGroupId"
+          inner JOIN "ProductGroup" pg ON p."productGroupId" = pg."id"
+          inner JOIN "ProductGroupSpec" pgs ON pgs."productGroupId" = pg."id"
+          inner JOIN "Spec" s ON s."id" = pgs."specId"
+          inner JOIN "SpecPreset" sp ON sp."id" = p."specPresetId"
+          inner JOIN "SpecPresetGroup" spg ON spg."presetId" = sp."id"
+          inner JOIN "SpecPresetGroupItem" spgi ON spgi."presetGroupId" = spg."id" AND spgi."specId" = s.id
+          inner JOIN "SpecValue" sv ON sv."specPresetGroupItemId" = spgi."id" AND sv."productId" = pp."id"
+          WHERE p.id = ${id}
+          order by pp.id, s."name"
+        `) as any[];
+
+        const variants: Record<string, any[]> = {};
+        for (const p of variationsList) {
+          if (variants[p.name] === undefined) {
+            variants[p.name] = [];
+          }
+          if (!variants[p.name].includes(p.value)) {
+            variants[p.name].push(p.value);
+          }
+        }
+
+        res.json({ product, variants });
         return;
       } catch (error) {
         next(error);

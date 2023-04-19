@@ -3,12 +3,10 @@ import path from 'path';
 import 'dotenv/config';
 import fileUpload from 'express-fileupload';
 import expressSession from 'express-session';
-import { PrismaSessionStore } from '@quixo3/prisma-session-store';
 
 import { extractUserFromSession } from './utils/extractUserFromSession';
 import { errorHandler } from './utils/errorHandler';
 import { api } from './api';
-import { prisma } from './client';
 
 export const app = express();
 
@@ -37,11 +35,11 @@ app.use(
     secret: process.env.SESSION_SECRET as string,
     resave: false,
     saveUninitialized: true,
-    store: new PrismaSessionStore(prisma, {
-      checkPeriod: 2 * 60 * 1000, //ms
-      dbRecordIdIsSessionId: true,
-      dbRecordIdFunction: undefined,
-    }),
+    // store: new PrismaSessionStore(prisma, {
+    //   checkPeriod: 2 * 60 * 1000, //ms
+    //   dbRecordIdIsSessionId: true,
+    //   dbRecordIdFunction: undefined,
+    // }),
   })
 );
 

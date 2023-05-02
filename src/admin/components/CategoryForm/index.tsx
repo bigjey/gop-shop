@@ -1,1 +1,1 @@
-export * from "./CategoryForm";
+export * from './CategoryForm';

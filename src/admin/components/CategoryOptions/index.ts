@@ -1,1 +1,1 @@
-export * from "./CategoryOptions";
+export * from './CategoryOptions';

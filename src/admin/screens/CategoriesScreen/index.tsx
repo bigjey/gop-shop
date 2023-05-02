@@ -1,1 +1,1 @@
-export * from "./CategoriesScreen";
+export * from './CategoriesScreen';

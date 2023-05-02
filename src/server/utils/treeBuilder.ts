@@ -1,5 +1,5 @@
-import { Category } from "@prisma/client";
-import { CategoryWithChildren } from "../../shared/types";
+import { Category } from '@prisma/client';
+import { CategoryWithChildren } from '../../shared/types';
 
 // export const createDataTree = (dataset: Category[]) => {
 //   const hashTable = Object.create(null);

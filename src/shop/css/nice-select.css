@@ -38,7 +38,7 @@
 .nice-select:after {
   border-bottom: 2px solid #999;
   border-right: 2px solid #999;
-  content: "";
+  content: '';
   display: block;
   height: 5px;
   margin-top: -4px;

@@ -43,7 +43,20 @@ export const AddProductScreen: React.FC = () => {
                 <Spinner animation="border" variant="primary" />
               </div>
             )}
-            <ProductForm onSubmit={onSubmit} data={{}} />
+            <ProductForm
+              onSubmit={onSubmit}
+              data={{
+                name: '',
+                price: 0,
+                categoryId: null,
+                description: '',
+                isAvailable: true,
+                isActive: true,
+                isFeatured: false,
+                saleValue: 0,
+                specPresetId: 0,
+              }}
+            />
           </div>
         </Container>
       </div>

@@ -1,4 +1,4 @@
-import { NextFunction, Request, Response } from "express";
+import { NextFunction, Request, Response } from 'express';
 
 export function errorHandler(
   err: unknown,
@@ -12,5 +12,5 @@ export function errorHandler(
     return next(err);
   }
 
-  res.status(500).send("Something broke!");
+  res.status(500).send('Something broke!');
 }

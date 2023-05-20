@@ -40,7 +40,7 @@ export const updateProduct = (
 export const getProduct = (
   id: number,
   query: URLSearchParams = new URLSearchParams()
-): Promise<ProductWithIncludes> => {
+): Promise<{ product: ProductWithIncludes }> => {
   return fetch(`${API_URL}/${id}?${query.toString()}`).then(
     processFetchResponse
   );

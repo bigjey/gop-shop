@@ -5,16 +5,14 @@ import * as Yup from 'yup';
 import { Col, Form, Row, InputGroup, Button } from 'react-bootstrap';
 import { CategoriesOptions } from '../CategoryOptions';
 import { getCategoriesTree } from '../../api/categories';
-import { ProductWithIncludes } from '../../../shared/types';
 import { getSpecPresets } from '../../api/specPresets';
 
 type ProductFormProps = {
-  data: Partial<ProductWithIncludes>;
+  data: Prisma.ProductUncheckedCreateInput;
   onSubmit(values: Prisma.ProductUncheckedCreateInput): unknown;
 };
 
-export const ProductForm: React.FC<ProductFormProps> = (props) => {
-  const { data, onSubmit } = props;
+export const ProductForm = ({ data, onSubmit }: ProductFormProps) => {
   const [categories, setCategories] = React.useState<Category[]>([]);
   const [specPresets, setSpecPresets] = React.useState<SpecPreset[]>([]);
 
@@ -29,17 +27,7 @@ export const ProductForm: React.FC<ProductFormProps> = (props) => {
 
   const formik = useFormik<Prisma.ProductUncheckedCreateInput>({
     enableReinitialize: true,
-    initialValues: {
-      name: data.name ?? '',
-      price: data.price ?? 0,
-      categoryId: data.categoryId ?? undefined,
-      description: data.description ?? '',
-      isAvailable: data.isAvailable ?? true,
-      isActive: data.isActive ?? true,
-      isFeatured: data.isFeatured ?? false,
-      saleValue: data.saleValue ?? 0,
-      specPresetId: data.specPresetId ?? 0,
-    },
+    initialValues: data,
     validationSchema: Yup.object({
       name: Yup.string().required(),
       price: Yup.number().required().positive(),

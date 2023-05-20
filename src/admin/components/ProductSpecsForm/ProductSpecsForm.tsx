@@ -3,24 +3,24 @@ import { Row, Form, Col, InputGroup } from 'react-bootstrap';
 import { ProductWithIncludes } from '../../../shared/types';
 
 export const ProductSpecsForm: React.FC<{
-  product: ProductWithIncludes;
+  productData: ProductWithIncludes;
   onChange?: () => void;
 }> = (props) => {
-  const { product, onChange } = props;
+  const { productData: productData, onChange } = props;
 
   const specValues = React.useMemo(() => {
     const values: Record<number, string> = {};
-    if (product?.specValues) {
-      for (const val of product.specValues) {
+    if (productData?.specValues) {
+      for (const val of productData.specValues) {
         values[val.specPresetGroupItemId] = val.value;
       }
     }
     return values;
-  }, [product?.specValues]);
+  }, [productData?.specValues]);
 
   return (
     <>
-      {product.specPreset?.presetGroups?.map((group) => (
+      {productData.specPreset?.presetGroups?.map((group) => (
         <React.Fragment key={group.id}>
           <h4>{group.name}</h4>
           {group.presetGroupItems?.map((groupItem) => (
@@ -37,7 +37,7 @@ export const ProductSpecsForm: React.FC<{
                         placeholder=""
                         required
                         autoComplete="false"
-                        value={specValues[groupItem.id] ?? ''}
+                        defaultValue={specValues[groupItem.id] ?? ''}
                       />
                     </InputGroup>
                   </Col>

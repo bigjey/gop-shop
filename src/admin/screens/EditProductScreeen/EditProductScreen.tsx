@@ -21,19 +21,26 @@ import { ProductGalleryForm } from '../../components/ProductGalleryForm/ProductG
 import { ProductSpecsForm } from '../../components/ProductSpecsForm';
 
 export const EditProductScreen: React.FC = () => {
-  const [isLoading, setIsLoading] = React.useState<boolean>(false);
-  const [product, setProduct] = React.useState<ProductWithIncludes>();
+  const [isLoading, setIsLoading] = React.useState<boolean>(true);
+  const [productData, setProductData] = React.useState<ProductWithIncludes>();
 
   const { id } = useParams<{ id: string }>();
   const location = useLocation();
   const navigate = useNavigate();
 
   const fetchProduct = () => {
+    setIsLoading(true);
     const query = new URLSearchParams();
     query.append('includeImages', '1');
     query.append('includeSpecs', '1');
 
-    getProduct(Number(id), query).then((data) => setProduct(data));
+    getProduct(Number(id), query)
+      .then((data) => {
+        setProductData(data.product);
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
   };
 
   React.useEffect(() => {
@@ -45,7 +52,6 @@ export const EditProductScreen: React.FC = () => {
       setIsLoading(true);
       updateProduct(Number(id), values)
         .then((data) => {
-          console.log({ data });
           navigate('', { replace: true });
         })
         .catch((err) => {
@@ -66,7 +72,7 @@ export const EditProductScreen: React.FC = () => {
     <>
       <div className="app-content-title">
         <Container>
-          <h1>Edit Product {product?.id}</h1>
+          <h1>Edit Product {productData?.id}</h1>
         </Container>
       </div>
       <div className="app-content-body">
@@ -77,17 +83,37 @@ export const EditProductScreen: React.FC = () => {
                 <Spinner animation="border" variant="primary" />
               </div>
             )}
-            {!isLoading && product ? (
+            {!isLoading && productData !== undefined ? (
               <>
                 <Tabs defaultActiveKey="general" className="mb-4">
                   <Tab eventKey="general" title="General info">
-                    <ProductForm key={id} onSubmit={onSubmit} data={product} />
+                    <ProductForm
+                      key={id}
+                      onSubmit={onSubmit}
+                      data={{
+                        name: productData?.name ?? '',
+                        price: productData?.price ?? 0,
+                        categoryId: productData?.categoryId ?? null,
+                        description: productData?.description ?? '',
+                        isAvailable: productData?.isAvailable ?? true,
+                        isActive: productData?.isActive ?? true,
+                        isFeatured: productData?.isFeatured ?? false,
+                        saleValue: productData?.saleValue ?? 0,
+                        specPresetId: productData?.specPresetId ?? 0,
+                      }}
+                    />
                   </Tab>
                   <Tab eventKey="gallery" title="Gallery">
-                    <ProductGalleryForm product={product} onChange={onChange} />
+                    <ProductGalleryForm
+                      product={productData}
+                      onChange={onChange}
+                    />
                   </Tab>
                   <Tab eventKey="specs" title="Specifications">
-                    <ProductSpecsForm product={product} onChange={onChange} />
+                    <ProductSpecsForm
+                      productData={productData}
+                      onChange={onChange}
+                    />
                   </Tab>
                 </Tabs>
               </>

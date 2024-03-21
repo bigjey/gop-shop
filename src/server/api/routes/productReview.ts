@@ -63,8 +63,7 @@ productReviewRouter
         filterSettings.id = Number(id);
       }
 
-      if (text && text.length > 0)
-        filterSettings.text = { contains: text, mode: 'insensitive' };
+      if (text && text.length > 0) filterSettings.text = { contains: text };
 
       if (productId === null) {
         //

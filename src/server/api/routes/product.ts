@@ -71,8 +71,7 @@ productRouter
         filterSettings.id = Number(id);
       }
 
-      if (name && name.length > 0)
-        filterSettings.name = { contains: name, mode: 'insensitive' };
+      if (name && name.length > 0) filterSettings.name = { contains: name };
 
       if (priceFrom === null) {
         //

@@ -44,7 +44,7 @@ cartRouter
 
       console.log({ productId, qty });
 
-      const where: Prisma.CartItemWhereUniqueInput = {};
+      const where: Prisma.CartItemWhereUniqueInput = { id: undefined };
       const create: Prisma.CartItemUncheckedCreateInput = {
         productId,
         qty,
@@ -98,7 +98,7 @@ cartRouter
       try {
         const { productId, qty } =
           req.body as Prisma.CartItemUncheckedCreateInput;
-        const where: Prisma.CartItemWhereUniqueInput = {};
+        const where: Prisma.CartItemWhereUniqueInput = { id: undefined };
 
         if (res.locals.user) {
           where.productId_userId = {
@@ -129,7 +129,7 @@ cartRouter
   .delete(async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { productId } = req.body as Prisma.CartItemUncheckedCreateInput;
-      const where: Prisma.CartItemWhereUniqueInput = {};
+      const where: Prisma.CartItemWhereUniqueInput = { id: undefined };
 
       if (res.locals.user) {
         where.productId_userId = {
